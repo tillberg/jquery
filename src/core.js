@@ -230,7 +230,8 @@ jQuery.fn = jQuery.prototype = {
 	// Behaves like an Array's method, not like a jQuery method.
 	push: push,
 	sort: [].sort,
-	splice: [].splice
+	splice: [].splice,
+	reverse: [].reverse
 };
 
 // Give the init function the jQuery prototype for later instantiation
