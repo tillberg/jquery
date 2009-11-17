@@ -410,31 +410,6 @@
     return true;
   };
 
-  // Is a given array or object empty?
-  _.isEmpty = function(obj) {
-    return (_.isArray(obj) ? obj : _.values(obj)).length == 0;
-  };
-
-  // Is a given value a DOM element?
-  _.isElement = function(obj) {
-    return !!(obj && obj.nodeType == 1);
-  };
-
-  // Is a given value a real Array?
-  _.isArray = function(obj) {
-    return Object.prototype.toString.call(obj) == '[object Array]';
-  };
-
-  // Is a given value a Function?
-  _.isFunction = function(obj) {
-    return Object.prototype.toString.call(obj) == '[object Function]';
-  };
-
-  // Is a given variable undefined?
-  _.isUndefined = function(obj) {
-    return typeof obj == 'undefined';
-  };
-
   /* -------------------------- Utility Functions: -------------------------- */
 
   // Run Underscore.js in noConflict mode, returning the '_' variable to its

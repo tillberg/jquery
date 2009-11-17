@@ -335,12 +335,26 @@ jQuery.extend({
 		
 		return key === undefined || hasOwnProperty.call( obj, key );
 	},
+	
+    // Is a given array or object empty?
+	isEmpty: function( obj ) {
+		return (jQuery.isArray(obj) ? obj : _.values(obj)).length == 0;
+	},
 
+    // Is a given value a DOM element?
+	isElement: function( obj ) {
+		return !!(obj && obj.nodeType == 1);
+	},
+
+	// Is a given variable defined?
+	isDefined: function(obj) {
+		return typeof obj != 'undefined';
+	},
+	
+	// The original jQuery function to test for emptiness.
+	// Just call the underscore version.
 	isEmptyObject: function( obj ) {
-		for ( var name in obj ) {
-			return false;
-		}
-		return true;
+		return jQuery.isEmpty(obj);
 	},
 
 	// check if an element is in a (or is an) XML document
