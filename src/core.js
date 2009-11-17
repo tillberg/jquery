@@ -125,6 +125,13 @@ jQuery.fn = jQuery.prototype = {
 		// Shortcut for document ready
 		} else if ( jQuery.isFunction( selector ) ) {
 			return rootjQuery.ready( selector );
+			
+		// HANDLE: $({...})
+		// This is quite experimental
+		} else if ( jQuery.isObject( selector ) ) {
+			debugger;
+			selector.prototype = this;
+			return selector;
 		}
 
 		if (selector.selector !== undefined) {
@@ -520,6 +527,8 @@ jQuery.extend({
 		mozilla: /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test( userAgent )
 	}
 });
+
+jQuery.isObject = jQuery.isObjectLiteral;
 
 if ( indexOf ) {
 	jQuery.inArray = function( elem, array ) {
