@@ -1,3 +1,12 @@
+Preface by Dan Tillberg:
+
+Don't actually use this for anything.  I'm just experimenting around with crazy ideas.
+
+kthx.
+
+
+
+
 [jQuery](http://jquery.com/) - New Wave Javascript
 ================================
 
