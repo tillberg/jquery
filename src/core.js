@@ -129,7 +129,6 @@ jQuery.fn = jQuery.prototype = {
 		// HANDLE: $({...})
 		// This is quite experimental
 		} else if ( jQuery.isObject( selector ) ) {
-			debugger;
 			selector.prototype = this;
 			return selector;
 		}
