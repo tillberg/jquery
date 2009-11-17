@@ -347,12 +347,17 @@ jQuery.extend({
 	isEmpty: function( obj ) {
 		return (jQuery.isArray(obj) ? obj : _.values(obj)).length == 0;
 	},
+	
+    // Is a given array or object empty?
+	isEmpty: function( obj ) {
+		return (jQuery.isArray(obj) ? obj : _.values(obj)).length == 0;
+	},
 
     // Is a given value a DOM element?
 	isElement: function( obj ) {
 		return !!(obj && obj.nodeType == 1);
 	},
-
+	
 	// Is a given variable defined?
 	isDefined: function(obj) {
 		return typeof obj != 'undefined';
