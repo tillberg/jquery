@@ -688,7 +688,7 @@ test("jQuery.makeArray", function(){
 
 test("jQuery.isEmptyObject", function(){
 	expect(2);
-	
+
 	equals(true, jQuery.isEmptyObject({}), "isEmptyObject on empty object literal" );
 	equals(false, jQuery.isEmptyObject({a:1}), "isEmptyObject on non-empty object literal" );
 	

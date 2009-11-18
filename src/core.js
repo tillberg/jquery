@@ -344,7 +344,7 @@ jQuery.extend({
 	
     // Is a given array or object empty?
 	isEmpty: function( obj ) {
-		return (jQuery.isArray(obj) ? obj : _.values(obj)).length == 0;
+		return (jQuery.isArray(obj) ? obj : jQuery.map(obj, function() { return this; })).length == 0;
 	},
 
     // Is a given value a DOM element?
