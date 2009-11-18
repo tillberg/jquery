@@ -101,6 +101,7 @@ jQuery.fn.extend({
 	},
 
 	map: function( callback ) {
+		if (this.isUserObject()) { return jQuery.map( this, callback ); }
 		return this.pushStack( jQuery.map(this, function(elem, i){
 			return callback.call( elem, i, elem );
 		}));

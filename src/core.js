@@ -255,7 +255,7 @@ jQuery.fn = jQuery.prototype = {
 	each: function( callback, args ) {
 		return jQuery.each( this, callback, args );
 	},
-
+	
 	// Determine the position of an element within
 	// the matched set of elements
 	index: function( elem ) {
@@ -547,6 +547,20 @@ jQuery.extend({
 
 	map: function( elems, callback ) {
 		var ret = [], value;
+		
+		// If this a jQuery Object Literal, then use an alternate map implementation
+		if (elems.isUserObject()) {
+			var ret = {};
+			for (var k in elems) {
+				if (elems.isUserKey(k)) { 
+					value = callback( elems[ k ], k);
+					if (value != null) {
+						ret[ k ] = value;
+					}
+				}
+			}
+			return jQuery(ret);
+		}
 
 		// Go through the array, translating each of the items to their
 		// new value (or values).
