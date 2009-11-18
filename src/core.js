@@ -256,7 +256,7 @@ jQuery.fn = jQuery.prototype = {
 		return jQuery.each( this, callback, args );
 	},
 
-	obj: function() {
+	raw: function() {
 		var r = {};
 		for (var k in this) { 
 			if (this.isUserKey(k)) { r[ k ] = this[ k ]; }
@@ -265,7 +265,7 @@ jQuery.fn = jQuery.prototype = {
 	},
 	
 	toJson: function() {
-		if (this.isUserObject()) { return JSON.stringify(this.obj()); }
+		if (this.isUserObject()) { return JSON.stringify(this.raw()); }
 	},
 	
 	// Determine the position of an element within

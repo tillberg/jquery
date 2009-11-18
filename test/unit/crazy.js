@@ -24,9 +24,9 @@ test('Utility', function() {
 	var obj = {a: 3, b: 'seven', c: 'ate'};
 	equals(JSON.stringify(obj), jQuery(obj).toJson(), '$({...}).toJson()');
 	
-	equals(JSON.stringify(obj), JSON.stringify(jQuery(obj).obj()), 'Object Literal Extraction');
+	equals(JSON.stringify(obj), JSON.stringify(jQuery(obj).raw()), 'Object Literal Extraction');
 	
-})
+});
 
 test('Map', function() {
 	expect(4);
