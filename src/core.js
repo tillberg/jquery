@@ -547,7 +547,7 @@ jQuery.extend({
 
 	map: function( elems, callback ) {
 		var ret = [], value;
-		
+		if (jQuery.isObjectLiteral(elems)) { elems = jQuery(elems); }
 		// If this a jQuery Object Literal, then use an alternate map implementation
 		if (elems.isUserObject()) {
 			var ret = {};

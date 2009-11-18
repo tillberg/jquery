@@ -1,7 +1,7 @@
 module("crazy");
 
 test("Constructors", function() {
-	expect(7);
+	expect(5);
 	
 	ok( jQuery({}), "$({})" );
 	
@@ -13,14 +13,21 @@ test("Constructors", function() {
 	equals(obj.race, 'Human', 'Object extension');
 	equals(obj.size(), 3, '$({...}).size()');
 	
-	var mappedValues = obj.map(function(v) { return (v + '').length; });
-	equals(mappedValues.name, name.length, 'Mapped object values');
-	equals(mappedValues.size(), 3, 'Number of mapped values')
 });
 
 
 test('Map', function() {
-	expect(1);
+	expect(4);
 	
-	equals(1, jQuery.map({a:1}, function() { return this; }).length, 'map on Object');
+	equals(1, jQuery.map({a:3}, function(v) { return v; }).size(), 'Size of map on Object');
+	equals(7, jQuery.map({a:3, b:7}, function(v) { return v; }).b, 'Value from map on Object');
+	
+	var name = 'Bob Smith'
+	var obj = jQuery({name: name, age: 42});
+	obj.race = 'Human';
+	
+	var mappedValues = obj.map(function(v) { return (v + '').length; });
+	equals(mappedValues.name, name.length, 'Mapped object values');
+	equals(mappedValues.size(), 3, 'Number of mapped values');
+
 });
