@@ -255,6 +255,18 @@ jQuery.fn = jQuery.prototype = {
 	each: function( callback, args ) {
 		return jQuery.each( this, callback, args );
 	},
+
+	obj: function() {
+		var r = {};
+		for (var k in this) { 
+			if (this.isUserKey(k)) { r[ k ] = this[ k ]; }
+		}
+		return r;
+	},
+	
+	toJson: function() {
+		if (this.isUserObject()) { return JSON.stringify(this.obj()); }
+	},
 	
 	// Determine the position of an element within
 	// the matched set of elements

@@ -18,6 +18,15 @@ test("Constructors", function() {
 	
 });
 
+test('Utility', function() {
+	expect(2);
+	
+	var obj = {a: 3, b: 'seven', c: 'ate'};
+	equals(JSON.stringify(obj), jQuery(obj).toJson(), '$({...}).toJson()');
+	
+	equals(JSON.stringify(obj), JSON.stringify(jQuery(obj).obj()), 'Object Literal Extraction');
+	
+})
 
 test('Map', function() {
 	expect(4);
@@ -32,5 +41,11 @@ test('Map', function() {
 	var mappedValues = obj.map(function(v) { return (v + '').length; });
 	equals(mappedValues.name, name.length, 'Mapped object values');
 	equals(mappedValues.size(), 3, 'Number of mapped values');
+	
+});
+
+test('Each', function() {
+	expect(0);
+	
 	
 });

@@ -35,6 +35,7 @@
         <echo message="Building ${JQ}" />
         <mkdir dir="${DIST_DIR}" />
         <concat destfile="${JQ}">
+            <fileset dir="${SRC_DIR}" includes="json2.js" />
             <fileset dir="${SRC_DIR}" includes="intro.js" />
             <fileset dir="${SRC_DIR}" includes="core.js" />
             <fileset dir="${SRC_DIR}" includes="data.js" />

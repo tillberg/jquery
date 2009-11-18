@@ -18,7 +18,8 @@ BASE_FILES = ${SRC_DIR}/core.js\
 	${SRC_DIR}/offset.js\
 	${SRC_DIR}/dimensions.js
 
-MODULES = ${SRC_DIR}/intro.js\
+MODULES = ${SRC_DIR}/json2.js\
+	${SRC_DIR}/intro.js\
 	${BASE_FILES}\
 	${SRC_DIR}/outro.js
 
