@@ -183,9 +183,13 @@ jQuery.fn = jQuery.prototype = {
 		if (this.length >= 0) { return this.length; }
 		var n = 0;
 		for (var k in this) { 
-			if (jQuery.isUserKey(k)) { n++; }
+			if (this.isUserKey(k)) { n++; }
 		}
 		return n;
+	},
+	
+	isUserKey: function(k) {
+		return (this.hasOwnProperty(k));
 	},
 	
 	toArray: function(){
@@ -339,10 +343,6 @@ jQuery.extend({
 		}
 
 		return jQuery;
-	},
-
-	isUserKey: function(k) {
-		return (!jQuery.isDefined(jQuery[k]) && !jQuery.isDefined(jQuery.fn[k]));
 	},
 
 	// See test/unit/core.js for details concerning isFunction.
