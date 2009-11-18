@@ -1,3 +1,26 @@
+
+// Douglas Crockford's object branching method
+Object.create = function(o) {
+  function F() { }
+  F.prototype = o;
+  return new F();
+};
+
+// Create a new prototype with the specified name, optionally deriving from an existing prototype
+function PROTO(o) {
+  var p = Object.create(o || {});
+  p.is = function(s) {return s === p || (o && o.is(s)); };
+  return p;
+}
+
+// Create a new object from proto, calling constructor
+function NEW(p) {
+  var o = Object.create(p);
+  if (o.cons) { o.cons.apply(o, [].slice.call(arguments, 1)); }
+  return o;
+}
+
+
 // Define a local copy of jQuery
 var jQuery = function( selector, context ) {
 		// The jQuery object is actually just the init constructor 'enhanced'
@@ -36,7 +59,7 @@ var jQuery = function( selector, context ) {
 
 	// Keep a UserAgent string for use with jQuery.browser
 	userAgent = navigator.userAgent.toLowerCase(),
-
+	
 	// Save a reference to some core methods
 	toString = Object.prototype.toString,
 	hasOwnProperty = Object.prototype.hasOwnProperty,
@@ -129,8 +152,11 @@ jQuery.fn = jQuery.prototype = {
 		// HANDLE: $({...})
 		// This is quite experimental
 		} else if ( jQuery.isObject( selector ) ) {
-			selector.prototype = this;
-			return selector;
+			// Make a copy of the object and make it a jQuery object
+			var obj = Object.create(this);
+			jQuery.extend(obj, selector);
+			this.length = -1;
+			return obj;
 		}
 
 		if (selector.selector !== undefined) {
@@ -154,9 +180,14 @@ jQuery.fn = jQuery.prototype = {
 
 	// The number of elements contained in the matched element set
 	size: function() {
-		return this.length;
+		if (this.length >= 0) { return this.length; }
+		var n = 0;
+		for (var k in this) { 
+			if (jQuery.isUserKey(k)) { n++; }
+		}
+		return n;
 	},
-
+	
 	toArray: function(){
 		return slice.call( this, 0 );
 	},
@@ -308,6 +339,10 @@ jQuery.extend({
 		}
 
 		return jQuery;
+	},
+
+	isUserKey: function(k) {
+		return (!jQuery.isDefined(jQuery[k]) && !jQuery.isDefined(jQuery.fn[k]));
 	},
 
 	// See test/unit/core.js for details concerning isFunction.
