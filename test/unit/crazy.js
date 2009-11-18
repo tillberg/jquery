@@ -1,7 +1,7 @@
 module("crazy");
 
 test("Constructors", function() {
-	expect(5);
+	expect(6);
 	
 	ok( jQuery({}), "$({})" );
 	
@@ -12,6 +12,9 @@ test("Constructors", function() {
 	obj.race = 'Human';
 	equals(obj.race, 'Human', 'Object extension');
 	equals(obj.size(), 3, '$({...}).size()');
+	
+	delete obj.name;
+	equals(obj.size(), 2, 'Object size after delete');
 	
 });
 
@@ -29,5 +32,5 @@ test('Map', function() {
 	var mappedValues = obj.map(function(v) { return (v + '').length; });
 	equals(mappedValues.name, name.length, 'Mapped object values');
 	equals(mappedValues.size(), 3, 'Number of mapped values');
-
+	
 });
