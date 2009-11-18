@@ -155,6 +155,7 @@ jQuery.fn = jQuery.prototype = {
 			// Make a copy of the object and make it a jQuery object
 			var obj = Object.create(this);
 			jQuery.extend(obj, selector);
+			// We use length of -1 to indicate this is no longer array-like
 			this.length = -1;
 			return obj;
 		}
@@ -188,8 +189,15 @@ jQuery.fn = jQuery.prototype = {
 		return n;
 	},
 	
+	// Return true if the specified key is a user property defined on this object
+	// e.g. ok($({name: 'Bob'}).isUserKey('name'), ...)
 	isUserKey: function(k) {
 		return (this.hasOwnProperty(k));
+	},
+	
+	// Return true if this jQuery object is derived from an object literal, i.e. $({})
+	isUserObject: function() {
+		return this.length === -1;
 	},
 	
 	toArray: function(){
