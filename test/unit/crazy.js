@@ -1,6 +1,6 @@
 module("crazy");
 
-test("Constructors", function() {
+test("Object Constructors", function() {
 	expect(6);
 	
 	ok( jQuery({}), "$({})" );
@@ -15,6 +15,17 @@ test("Constructors", function() {
 	
 	delete obj.name;
 	equals(obj.size(), 2, 'Object size after delete');
+	
+});
+
+test('Array Constructors', function() {
+	expect(3);
+	
+	var arr = [1, 2, 3, 5, 7, 11];
+	var $arr = jQuery(arr);
+	equals(5, $arr[3], 'Index into jQuery Array');
+	equals(JSON.stringify(arr), $arr.toJson(), 'Array to Json');
+	equals(arr.length, $arr.size(), "Array size");
 	
 });
 
@@ -48,4 +59,12 @@ test('Each', function() {
 	expect(0);
 	
 	
+});
+
+test('Chaining', function() {
+	expect(2);
+	function nodify(v, k) { return '<' + k + '>' + v + '</' + k + '>'; }
+	var html = jQuery({div:3, span: 5, code: 7}).map(nodify).join('');
+	equals(html, '<div>3</div><span>5</span><code>7</code>', 'Chain map & join');
+	equals(jQuery(html).filter('div').text(), '3', 'Fun stuff after the chain.  Not all the useful, though.')
 });

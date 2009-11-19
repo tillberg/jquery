@@ -158,6 +158,14 @@ jQuery.fn = jQuery.prototype = {
 			// We use length of -1 to indicate this is no longer array-like
 			this.length = -1;
 			return obj;
+		
+		// HANDLE: $([...])
+		// Also quite experimental
+		} else if ( jQuery.isArray( selector ) ) {
+			// Method borrowed from pushStack:
+			this.length = 0;
+			push.apply( this, selector );
+			return this;
 		}
 
 		if (selector.selector !== undefined) {
@@ -255,8 +263,29 @@ jQuery.fn = jQuery.prototype = {
 	each: function( callback, args ) {
 		return jQuery.each( this, callback, args );
 	},
+	
+	keys: function() {
+		var ret = [];
+		for (var k in this.raw()) {
+			ret.push(k);
+		}
+		return jQuery(ret);
+	},
+	
+	vals: function() {
+		var ret = [], raw = this.raw();
+		for (var k in raw) {
+			ret.push(raw[ k ]);
+		}
+		return jQuery(ret);
+	},
+	
+	join: function( sep ) {
+		return [].join.call(this.isUserObject() ? this.vals() : this, sep || '');
+	},
 
 	raw: function() {
+		if (!this.isUserObject()) { return this.toArray(); }
 		var r = {};
 		for (var k in this) { 
 			if (this.isUserKey(k)) { r[ k ] = this[ k ]; }
@@ -265,7 +294,7 @@ jQuery.fn = jQuery.prototype = {
 	},
 	
 	toJson: function() {
-		if (this.isUserObject()) { return JSON.stringify(this.raw()); }
+		return JSON.stringify(this.raw());
 	},
 	
 	// Determine the position of an element within
