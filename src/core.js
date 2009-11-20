@@ -200,7 +200,7 @@ jQuery.fn = jQuery.prototype = {
 	// Return true if the specified key is a user property defined on this object
 	// e.g. ok($({name: 'Bob'}).isUserKey('name'), ...)
 	isUserKey: function(k) {
-		return (this.hasOwnProperty(k));
+		return this.hasOwnProperty(k);
 	},
 	
 	// Return true if this jQuery object is derived from an object literal, i.e. $({})
@@ -209,7 +209,7 @@ jQuery.fn = jQuery.prototype = {
 	},
 	
 	toArray: function(){
-		return slice.call( this, 0 );
+		return slice.call( this.isUserObject() ? this.vals() : this, 0 );
 	},
 
 	// Get the Nth element in the matched element set OR
