@@ -68,3 +68,4 @@ test('Chaining', function() {
 	equals(html, '<div>3</div><span>5</span><code>7</code>', 'Chain map & join');
 	equals(jQuery(html).filter('div').text(), '3', 'Fun stuff after the chain.  Not all the useful, though.')
 });
+
