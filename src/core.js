@@ -489,7 +489,8 @@ jQuery.extend({
 	each: function( object, callback, args ) {
 		var name, i = 0,
 			length = object.length,
-			isObj = length === undefined || jQuery.isFunction(object);
+			isUserObj = length < 0,
+			isObj = length === undefined || isUserObj || jQuery.isFunction(object);
 
 		if ( args ) {
 			if ( isObj ) {
@@ -510,9 +511,11 @@ jQuery.extend({
 		} else {
 			if ( isObj ) {
 				for ( name in object ) {
-					if ( callback.call( object[ name ], name, object[ name ] ) === false ) {
-						break;
-					}
+				    if (!isUserObj || object.isUserKey(name)) {
+					    if ( callback.call( object[ name ], name, object[ name ] ) === false ) {
+						    break;
+					    }
+				    }
 				}
 			} else {
 				for ( var value = object[0];

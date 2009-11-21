@@ -56,9 +56,25 @@ test('Map', function() {
 });
 
 test('Each', function() {
-	expect(0);
+	expect(4);
 	
+	var obj = {a:2, b: 5, c: 7};
+	var str = '', correctStr = 'a=2,b=5,c=7,';
+	function kvStrApp(k,v) { str += k + '=' + v + ','; }
+	jQuery(obj).each(kvStrApp);
+	equals(str, correctStr, '$({...}).each(cb)');
+	str = '';
+	jQuery.each(obj, kvStrApp);
+	equals(str, correctStr, '$.each({...}, cb)');
 	
+	var arr = ['alice', 'bob', 'charlie'];
+	str = '', correctStr = 'alice,bob,charlie,';
+	function vStrApp(k,v) { str += v + ','; }
+	jQuery(arr).each(vStrApp);
+	equals(str, correctStr, '$([...]).each(cb)');
+	str = '';
+	jQuery.each(arr, vStrApp);
+	equals(str, correctStr, '$.each([...], cb)');
 });
 
 test('Chaining', function() {
