@@ -591,12 +591,22 @@ jQuery.extend({
 
 	map: function( elems, callback ) {
 		var ret = [], value;
-		if (jQuery.isObjectLiteral(elems)) { elems = jQuery(elems); }
+		if (jQuery.isObjectLiteral(elems)) { 
+			var ret = {};
+			for (var k in elems) {
+				value = callback( elems[ k ], k);
+				if (value != null) {
+					ret[ k ] = value;
+				}
+			}
+			return ret;
+		}
+		
 		// If this a jQuery Object Literal, then use an alternate map implementation
 		if (elems.isUserObject()) {
 			var ret = {};
 			for (var k in elems) {
-				if (elems.isUserKey(k)) { 
+				if (elems.hasOwnProperty(k)) { 
 					value = callback( elems[ k ], k);
 					if (value != null) {
 						ret[ k ] = value;
@@ -618,6 +628,15 @@ jQuery.extend({
 
 		return ret.concat.apply( [], ret );
 	},
+	
+	// Return an array of integers from 0 to m - 1, or m to n - 1 if n is specified.
+    range: function(m, n) {
+      if (n === undefined) { n = m; m = 0; }
+      var r = [];
+      for (var i = m; i < n; i++) { r.push(i); }
+      return jQuery(r);
+    },
+    
 
 	// Use of jQuery.browser is deprecated.
 	// It's included for backwards compatibility and plugins,

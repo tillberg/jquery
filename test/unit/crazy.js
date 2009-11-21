@@ -42,7 +42,7 @@ test('Utility', function() {
 test('Map', function() {
 	expect(4);
 	
-	equals(1, jQuery.map({a:3}, function(v) { return v; }).size(), 'Size of map on Object');
+	equals(6, jQuery.map({a:3}, function(v) { return 2 * v; }).a, '$.map({...})');
 	equals(7, jQuery.map({a:3, b:7}, function(v) { return v; }).b, 'Value from map on Object');
 	
 	var name = 'Bob Smith'
@@ -53,6 +53,23 @@ test('Map', function() {
 	equals(mappedValues.name, name.length, 'Mapped object values');
 	equals(mappedValues.size(), 3, 'Number of mapped values');
 	
+	/*
+	var obj = {};
+	jQuery.range(0).each(function(k,v) { obj[v] = v; });
+	function mapper1() { jQuery.map(obj, function(v) { return v; }); }
+	function mapper2() { jQuery(obj).map(function(v) { return v; }); }
+	
+	function benchmark(fn, times){
+	    var t=new Date;
+	    while(times--) { fn(); }
+	    return new Date-t;
+    }
+    
+    // With empty obj, mapper2 was about 20-30X slower.
+    // With 100 elements, mapper2 was about 10X slower.
+    //alert(benchmark(mapper1, 3000));
+    alert(benchmark(mapper2, 3000));
+    */
 });
 
 test('Each', function() {
