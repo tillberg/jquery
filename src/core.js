@@ -151,7 +151,7 @@ jQuery.fn = jQuery.prototype = {
 			
 		// HANDLE: $({...})
 		// This is quite experimental
-		} else if ( jQuery.isObject( selector ) ) {
+		} else if ( jQuery.isObjectLiteral( selector ) ) {
 		    // this.o is the object literal
 			this.o = selector;
 			return this;
@@ -623,8 +623,6 @@ jQuery.extend({
 		mozilla: /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test( userAgent )
 	}
 });
-
-jQuery.isObject = jQuery.isObjectLiteral;
 
 if ( indexOf ) {
 	jQuery.inArray = function( elem, array ) {
