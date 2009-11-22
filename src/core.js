@@ -154,7 +154,6 @@ jQuery.fn = jQuery.prototype = {
 		} else if ( jQuery.isObject( selector ) ) {
 		    // this.o is the object literal
 			this.o = selector;
-			this.length = -1;  // This should be removed in the future and checks for isUserObject() should be replaced with !this.o
 			return this;
 		
 		// HANDLE: $([...])
