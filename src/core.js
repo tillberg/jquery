@@ -178,13 +178,8 @@ jQuery.fn = jQuery.prototype = {
 		return this.o && (this.o[k] !== undefined);
 	},
 	
-	// Return true if this jQuery object is derived from an object literal, i.e. $({})
-	isUserObject: function() {
-		return this.o;
-	},
-	
 	toArray: function(){
-		return slice.call( this.isUserObject() ? this.vals() : this, 0 );
+		return slice.call( this.o ? this.vals() : this, 0 );
 	},
 
 	// Get the Nth element in the matched element set OR
@@ -256,7 +251,8 @@ jQuery.fn = jQuery.prototype = {
 	},
 	
 	join: function( sep ) {
-		return [].join.call( this.isUserObject() ? this.vals() : this, sep || '' );
+		// Join the values of either the object or array with the specified separator
+		return [].join.call( this.o ? this.vals() : this, sep || '' );
 	},
 
 	raw: function() {
