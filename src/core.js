@@ -244,6 +244,10 @@ jQuery.fn = jQuery.prototype = {
 	
 	vals: function() {
 		var ret = [], raw = this.raw();
+		
+		// This would speed up calls of this function when holding an array
+		//if ( !this.o ) { return raw; }
+		
 		for ( var k in raw ) {
 			ret.push( raw[ k ] );
 		}
