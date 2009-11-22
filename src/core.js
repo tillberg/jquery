@@ -163,7 +163,10 @@ jQuery.fn = jQuery.prototype = {
 
 	// The number of elements contained in the matched element set
 	size: function() {
+		// If this is a normal jQuery object, return the array length
 		if (!this.o) { return this.length; }
+		
+		// If this holds an object literal, count the number of keys
 		var n = 0;
 		for (var k in this.o) { n++; }
 		return n;
