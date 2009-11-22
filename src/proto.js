@@ -6,7 +6,7 @@ jQuery.extend({
 		
 		// Adapted form of Douglas Crockford's Object.create
 		function create( z ) {
-			function F() { }
+			function F() {}
 		  	F.prototype = z;
 		  	return new F();
 		}
@@ -19,7 +19,7 @@ jQuery.extend({
 			return s === p || ( par && par.is( s ) ); 
 		};
 		
-		p.new = function( ) {
+		p.make = function() {
   			var o = create( p );
 			// Execute the top-most constructor, passing in the specified arguments
   			if ( p.cons ) {

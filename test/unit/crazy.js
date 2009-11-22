@@ -103,3 +103,13 @@ test('Chaining', function() {
 	equals(jQuery(html).filter('div').text(), '3', 'Fun stuff after the chain.  Not all the useful, though.')
 });
 
+test('Prototyping', function() {
+	expect(1);
+	
+	var Thing = jQuery.proto();
+	var Creature = jQuery.proto(Thing);
+	var Person = jQuery.proto(Creature);
+	
+	var bob = Person.make();
+	ok(bob.is(Thing), 'Proto.is');
+});
