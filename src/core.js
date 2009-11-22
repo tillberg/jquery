@@ -236,27 +236,27 @@ jQuery.fn = jQuery.prototype = {
 	// (You can seed the arguments with an array of args, but this is
 	// only used internally.)
 	each: function( callback, args ) {
-		return jQuery.each( this, callback, args );
+		return jQuery.each( this.o || this, callback, args );
 	},
 	
 	keys: function() {
-		var ret = [];
-		for (var k in this.raw()) {
-			ret.push(k);
+		var ret = [ ];
+		for ( var k in this.raw() ) {
+			ret.push( k );
 		}
-		return jQuery(ret);
+		return jQuery( ret );
 	},
 	
 	vals: function() {
 		var ret = [], raw = this.raw();
-		for (var k in raw) {
-			ret.push(raw[ k ]);
+		for ( var k in raw ) {
+			ret.push( raw[ k ] );
 		}
-		return jQuery(ret);
+		return jQuery( ret );
 	},
 	
 	join: function( sep ) {
-		return [].join.call(this.isUserObject() ? this.vals() : this, sep || '');
+		return [].join.call( this.isUserObject() ? this.vals() : this, sep || '' );
 	},
 
 	raw: function() {
@@ -264,7 +264,7 @@ jQuery.fn = jQuery.prototype = {
 	},
 	
 	toJson: function() {
-		return JSON.stringify(this.raw());
+		return JSON.stringify( this.raw() );
 	},
 	
 	// Determine the position of an element within
@@ -457,8 +457,7 @@ jQuery.extend({
 
 	// args is for internal usage only
 	each: function( object, callback, args ) {
-	    if (object.o) { object = object.o; }
-		var name, i = 0,
+	    var name, i = 0,
 			length = object.length,
 			isObj = length === undefined || jQuery.isFunction(object);
 
