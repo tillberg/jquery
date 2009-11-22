@@ -5,6 +5,7 @@ PREFIX = .
 DIST_DIR = ${PREFIX}/dist
 
 BASE_FILES = ${SRC_DIR}/core.js\
+	${SRC_DIR}/proto.js\
 	${SRC_DIR}/data.js\
 	${SRC_DIR}/event.js\
 	${SRC_DIR}/support.js\
