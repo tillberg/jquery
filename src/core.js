@@ -152,12 +152,10 @@ jQuery.fn = jQuery.prototype = {
 		// HANDLE: $({...})
 		// This is quite experimental
 		} else if ( jQuery.isObject( selector ) ) {
-			// Make a copy of the object and make it a jQuery object
-			var obj = Object.create(this);
-			jQuery.extend(obj, selector);
-			// We use length of -1 to indicate this is no longer array-like
-			this.length = -1;
-			return obj;
+		    // this.o is the object literal
+			this.o = selector;
+			this.length = -1;  // This should be removed in the future and checks for isUserObject() should be replaced with !this.o
+			return this;
 		
 		// HANDLE: $([...])
 		// Also quite experimental
@@ -189,23 +187,21 @@ jQuery.fn = jQuery.prototype = {
 
 	// The number of elements contained in the matched element set
 	size: function() {
-		if (this.length >= 0) { return this.length; }
+		if (!this.o) { return this.length; }
 		var n = 0;
-		for (var k in this) { 
-			if (this.isUserKey(k)) { n++; }
-		}
+		for (var k in this.o) { n++; }
 		return n;
 	},
 	
 	// Return true if the specified key is a user property defined on this object
 	// e.g. ok($({name: 'Bob'}).isUserKey('name'), ...)
 	isUserKey: function(k) {
-		return this.hasOwnProperty(k);
+		return this.o && (this.o[k] !== undefined);
 	},
 	
 	// Return true if this jQuery object is derived from an object literal, i.e. $({})
 	isUserObject: function() {
-		return this.length === -1;
+		return this.o;
 	},
 	
 	toArray: function(){
@@ -285,12 +281,7 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	raw: function() {
-		if (!this.isUserObject()) { return this.toArray(); }
-		var r = {};
-		for (var k in this) { 
-			if (this.isUserKey(k)) { r[ k ] = this[ k ]; }
-		}
-		return r;
+		return this.o || this.toArray();
 	},
 	
 	toJson: function() {
@@ -487,10 +478,10 @@ jQuery.extend({
 
 	// args is for internal usage only
 	each: function( object, callback, args ) {
+	    if (object.o) { object = object.o; }
 		var name, i = 0,
 			length = object.length,
-			isUserObj = length < 0,
-			isObj = length === undefined || isUserObj || jQuery.isFunction(object);
+			isObj = length === undefined || jQuery.isFunction(object);
 
 		if ( args ) {
 			if ( isObj ) {
@@ -511,11 +502,9 @@ jQuery.extend({
 		} else {
 			if ( isObj ) {
 				for ( name in object ) {
-				    if (!isUserObj || object.isUserKey(name)) {
-					    if ( callback.call( object[ name ], name, object[ name ] ) === false ) {
-						    break;
-					    }
-				    }
+				    if ( callback.call( object[ name ], name, object[ name ] ) === false ) {
+					    break;
+					}
 				}
 			} else {
 				for ( var value = object[0];
@@ -602,20 +591,6 @@ jQuery.extend({
 			return ret;
 		}
 		
-		// If this a jQuery Object Literal, then use an alternate map implementation
-		if (elems.isUserObject()) {
-			var ret = {};
-			for (var k in elems) {
-				if (elems.hasOwnProperty(k)) { 
-					value = callback( elems[ k ], k);
-					if (value != null) {
-						ret[ k ] = value;
-					}
-				}
-			}
-			return jQuery(ret);
-		}
-
 		// Go through the array, translating each of the items to their
 		// new value (or values).
 		for ( var i = 0, length = elems.length; i < length; i++ ) {

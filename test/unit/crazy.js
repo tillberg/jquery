@@ -7,13 +7,13 @@ test("Object Constructors", function() {
 	
 	var name = 'Bob Smith'
 	var obj = jQuery({name: name, age: 42});
-	equals(obj.name, name, '$({key: value}) === value');
+	equals(obj.o.name, name, '$({key: value}) === value');
 	equals(obj.size(), 2, '$({...}).size()');
-	obj.race = 'Human';
-	equals(obj.race, 'Human', 'Object extension');
+	obj.o.race = 'Human';
+	equals(obj.o.race, 'Human', 'Object extension');
 	equals(obj.size(), 3, '$({...}).size()');
 	
-	delete obj.name;
+	delete obj.o.name;
 	equals(obj.size(), 2, 'Object size after delete');
 	
 });
@@ -42,20 +42,20 @@ test('Utility', function() {
 test('Map', function() {
 	expect(4);
 	
-	equals(6, jQuery.map({a:3}, function(v) { return 2 * v; }).a, '$.map({...})');
-	equals(7, jQuery.map({a:3, b:7}, function(v) { return v; }).b, 'Value from map on Object');
+	equals(jQuery.map({a:3}, function(v) { return 2 * v; }).a, 6, '$.map({...})');
+	equals(jQuery.map({a:3, b:7}, function(v) { return v; }).b, 7, 'Value from map on Object');
 	
 	var name = 'Bob Smith'
 	var obj = jQuery({name: name, age: 42});
-	obj.race = 'Human';
+	obj.o.race = 'Human';
 	
 	var mappedValues = obj.map(function(v) { return (v + '').length; });
-	equals(mappedValues.name, name.length, 'Mapped object values');
+	equals(mappedValues.o.name, name.length, 'Mapped object values');
 	equals(mappedValues.size(), 3, 'Number of mapped values');
 	
 	/*
 	var obj = {};
-	jQuery.range(0).each(function(k,v) { obj[v] = v; });
+	jQuery.range(100).each(function(k,v) { obj[v] = v; });
 	function mapper1() { jQuery.map(obj, function(v) { return v; }); }
 	function mapper2() { jQuery(obj).map(function(v) { return v; }); }
 	
@@ -65,10 +65,11 @@ test('Map', function() {
 	    return new Date-t;
     }
     
-    // With empty obj, mapper2 was about 20-30X slower.
-    // With 100 elements, mapper2 was about 10X slower.
-    //alert(benchmark(mapper1, 3000));
-    alert(benchmark(mapper2, 3000));
+    // Using prototypal inheritance and attaching keys directly to the jQuery object:
+    // empty obj: about 20-30X slower, 100 elements: about 10X slower.
+    // After changing to .o style:
+    // empty obj: about 2X slower, 100 elements: ~1.7X slower
+    alert('traditional: ' + benchmark(mapper1, 3000) + ', new: ' + benchmark(mapper2, 3000));
     */
 });
 
