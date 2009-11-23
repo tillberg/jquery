@@ -256,7 +256,7 @@ jQuery.fn = jQuery.prototype = {
 	
 	join: function( sep ) {
 		// Join the values of either the object or array with the specified separator
-		return [].join.call( this.o ? this.vals() : this, sep || '' );
+		return [].join.call( this.o ? this.vals() : this, sep );
 	},
 
 	raw: function() {
