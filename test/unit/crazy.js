@@ -1,57 +1,81 @@
-module("crazy");
+module('crazy');
 
-test("Object Constructors", function() {
-	expect(4);
+test( 'Object Constructor', function() {
+	expect( 4 );
 	
-	ok( jQuery({}), "$({})" );
-	ok( jQuery.isObjectLiteral( jQuery({}).o ), "$({}).o is object literal" );
+	ok( jQuery( {} ), '$({})' );
+	ok( jQuery.isObjectLiteral( jQuery({}).o ), '$({}).o is object literal' );
 	
-	var name = 'Bob Smith'
-	var obj = jQuery({name: name, age: 42});
-	equals(obj.o.name, name, '$({key: value}).o.key === value');
+	var name = 'Bob Smith';
+	var obj = jQuery( { name: name, age: 42 } );
+	equals( obj.o.name, name, '$({key: value}).o.key === value' );
 	
 	// This test is kind of silly but demonstrates how it can be used
 	obj.o.race = 'Human';
-	equals(obj.o.race, 'Human', '$obj.o.key = value');
+	equals( obj.o.race, 'Human', '$obj.o.key = value' );
 	
 });
 
-test('Size', function() {
-	expect(3);
+test( 'Array Constructor', function() {
+	expect( 3 );
 	
-	var obj = jQuery({name: name, age: 42});
-	equals(obj.size(), 2, '$({...}).size()');
+	var arr = [ 1, 2, 3, 5, 7, 11 ];
+
+	ok( jQuery( [] ), '$( [] )');
+	ok( jQuery( arr ), '$( [ ... ] )');
 	
+	var $arr = jQuery( arr );
+	equals( $arr[ 3 ], arr[ 3 ], 'Index into jQuery Array');
+	
+});
+
+test( 'size', function() {
+	expect( 6 );
+	
+	equals( jQuery( {} ).size(), 0, '$( {} ).size()');
+	
+	var obj = jQuery( { name: name, age: 42 } );
+	equals( obj.size(), 2, '$({...}).size()' );
 	obj.o.race = 'Human';
-	equals(obj.size(), 3, '$({...}).size() after ad hoc object extension');
-	
+	equals( obj.size(), 3, '$({...}).size() after ad hoc object extension' );
 	delete obj.o.name;
-	equals(obj.size(), 2, '$({...}).size() after ad hoc delete');
+	equals( obj.size(), 2, '$({...}).size() after ad hoc delete' );
+	
+	equals( jQuery( [] ).size(), 0, '$( [] ).size()' );
+	equals( jQuery( [ 1, 2, 3 ] ).size(), 3, '$( [...] ).size()' );
 	
 });
 
-test('Array Constructors', function() {
-	expect(3);
+test( 'join', function() {
+	expect( 6 );
 	
-	var arr = [1, 2, 3, 5, 7, 11];
-	var $arr = jQuery(arr);
-	equals(5, $arr[3], 'Index into jQuery Array');
-	equals(JSON.stringify(arr), $arr.toJson(), 'Array to Json');
-	equals(arr.length, $arr.size(), "Array size");
+	equals( jQuery( [] ).join(), '', 'jQuery( [] ).join()' );
+	equals( jQuery( [ 1, 2, 3 ] ).join(), '1,2,3', 'jQuery( [ ... ] ).join()' );
+	equals( jQuery( [ 1, 2, 3 ] ).join( 'abc' ), '1abc2abc3', 'jQuery( [ ... ] ).join( "..." )' );
+	
+	equals( jQuery( {} ).join(), '', 'jQuery( {} ).join()');
+	equals( jQuery( { a: 1, b: 2, c: 3 } ).join(), '1,2,3', 'jQuery( { ... } ).join()' );
+	equals( jQuery( { a: 1, b: 2, c: 3 } ).join( 'abc' ), '1abc2abc3', 'jQuery( { ... } ).join( "..." )' );
+});
+
+test( 'raw', function() {
+	expect( 2 );
+	
+	equals( jQuery( [ 3, 5, 7 ] ).raw()[1], 5, 'raw() of array' );
+	equals( jQuery( { a: 1, b: 2, c: 3 } ).raw().b, 2, 'raw() of object' );
+});
+
+test( 'toJson', function() {
+	expect( 2 );
+	
+	var obj = { a: 3, b: 'seven', c: 'ate' };
+	equals( JSON.stringify( obj ), jQuery( obj ).toJson(), '$({...}).toJson()' );
+	var arr = [ 1, 2, 3, 5, 7, 11 ];
+	equals( JSON.stringify( arr ), jQuery( arr ).toJson(), 'Array to Json' );
 	
 });
 
-test('Utility', function() {
-	expect(2);
-	
-	var obj = {a: 3, b: 'seven', c: 'ate'};
-	equals(JSON.stringify(obj), jQuery(obj).toJson(), '$({...}).toJson()');
-	
-	equals(JSON.stringify(obj), JSON.stringify(jQuery(obj).raw()), 'Object Literal Extraction');
-	
-});
-
-test('Map', function() {
+test( 'map', function() {
 	expect(4);
 	
 	equals(jQuery.map({a:3}, function(v) { return 2 * v; }).a, 6, '$.map({...})');
@@ -85,7 +109,7 @@ test('Map', function() {
     */
 });
 
-test('Each', function() {
+test( 'each', function() {
 	expect(4);
 	
 	var obj = {a:2, b: 5, c: 7};
@@ -107,7 +131,7 @@ test('Each', function() {
 	equals(str, correctStr, '$.each([...], cb)');
 });
 
-test('Chaining', function() {
+test( 'Chaining', function() {
 	expect(2);
 	function nodify(v, k) { return '<' + k + '>' + v + '</' + k + '>'; }
 	var html = jQuery({div:3, span: 5, code: 7}).map(nodify).join('');
@@ -115,7 +139,7 @@ test('Chaining', function() {
 	equals(jQuery(html).filter('div').text(), '3', 'Fun stuff after the chain.  Not all the useful, though.')
 });
 
-test('Prototyping', function() {
+test( 'Prototyping', function() {
 	expect(1);
 	
 	var Thing = jQuery.proto();
