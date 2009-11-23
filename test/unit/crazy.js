@@ -61,7 +61,7 @@ test( 'join', function() {
 test( 'raw', function() {
 	expect( 2 );
 	
-	equals( jQuery( [ 3, 5, 7 ] ).raw()[1], 5, 'raw() of array' );
+	equals( jQuery( [ 3, 5, 7 ] ).raw()[ 1 ], 5, 'raw() of array' );
 	equals( jQuery( { a: 1, b: 2, c: 3 } ).raw().b, 2, 'raw() of object' );
 });
 
@@ -76,18 +76,18 @@ test( 'toJson', function() {
 });
 
 test( 'map', function() {
-	expect(4);
+	expect( 4 );
 	
-	equals(jQuery.map({a:3}, function(v) { return 2 * v; }).a, 6, '$.map({...})');
-	equals(jQuery.map({a:3, b:7}, function(v) { return v; }).b, 7, 'Value from map on Object');
+	equals( jQuery.map( { a:3 }, function( v ) { return 2 * v; } ).a, 6, '$.map({...})' );
+	equals( jQuery.map( { a:3, b:7 }, function( v ) { return v; } ).b, 7, 'Value from map on Object' );
 	
 	var name = 'Bob Smith'
-	var obj = jQuery({name: name, age: 42});
+	var obj = jQuery( { name: name, age: 42 } );
 	obj.o.race = 'Human';
 	
-	var mappedValues = obj.map(function(v) { return (v + '').length; });
-	equals(mappedValues.o.name, name.length, 'Mapped object values');
-	equals(mappedValues.size(), 3, 'Number of mapped values');
+	var mappedValues = obj.map( function( v ) { return ( v + '' ).length; } );
+	equals( mappedValues.o.name, name.length, 'Mapped object values' );
+	equals( mappedValues.size(), 3, 'Number of mapped values' );
 	
 	/*
 	var obj = {}, $obj = jQuery( obj );
@@ -112,42 +112,42 @@ test( 'map', function() {
 });
 
 test( 'each', function() {
-	expect(4);
+	expect( 4 );
 	
-	var obj = {a:2, b: 5, c: 7};
+	var obj = { a:2, b: 5, c: 7 };
 	var str = '', correctStr = 'a=2,b=5,c=7,';
-	function kvStrApp(k,v) { str += k + '=' + v + ','; }
-	jQuery(obj).each(kvStrApp);
-	equals(str, correctStr, '$({...}).each(cb)');
+	function kvStrApp( k, v ) { str += k + '=' + v + ','; }
+	jQuery( obj ).each( kvStrApp );
+	equals( str, correctStr, '$({...}).each(cb)' );
 	str = '';
-	jQuery.each(obj, kvStrApp);
-	equals(str, correctStr, '$.each({...}, cb)');
+	jQuery.each( obj, kvStrApp );
+	equals( str, correctStr, '$.each({...}, cb)' );
 	
-	var arr = ['alice', 'bob', 'charlie'];
+	var arr = [ 'alice', 'bob', 'charlie' ];
 	str = '', correctStr = 'alice,bob,charlie,';
-	function vStrApp(k,v) { str += v + ','; }
-	jQuery(arr).each(vStrApp);
-	equals(str, correctStr, '$([...]).each(cb)');
+	function vStrApp( k, v ) { str += v + ','; }
+	jQuery( arr ).each( vStrApp );
+	equals( str, correctStr, '$([...]).each(cb)' );
 	str = '';
-	jQuery.each(arr, vStrApp);
-	equals(str, correctStr, '$.each([...], cb)');
+	jQuery.each( arr, vStrApp );
+	equals( str, correctStr, '$.each([...], cb)' );
 });
 
 test( 'Chaining', function() {
-	expect(2);
-	function nodify(v, k) { return '<' + k + '>' + v + '</' + k + '>'; }
-	var html = jQuery({div:3, span: 5, code: 7}).map(nodify).join('');
-	equals(html, '<div>3</div><span>5</span><code>7</code>', 'Chain map & join');
-	equals(jQuery(html).filter('div').text(), '3', 'Fun stuff after the chain.  Not all the useful, though.')
+	expect( 2 );
+	function nodify( v, k ) { return '<' + k + '>' + v + '</' + k + '>'; }
+	var html = jQuery( { div:3, span: 5, code: 7 } ).map( nodify ).join( '' );
+	equals( html, '<div>3</div><span>5</span><code>7</code>', 'Chain map & join' );
+	equals( jQuery( html ).filter( 'div' ).text(), '3', 'Fun stuff after the chain.  Not all the useful, though.' );
 });
 
 test( 'Prototyping', function() {
-	expect(1);
+	expect( 1 );
 	
 	var Thing = jQuery.proto();
-	var Creature = jQuery.proto(Thing);
-	var Person = jQuery.proto(Creature);
+	var Creature = jQuery.proto( Thing );
+	var Person = jQuery.proto( Creature );
 	
 	var bob = Person.make();
-	ok(bob.is(Thing), 'Proto.is');
+	ok( bob.is( Thing ), 'Proto.is' );
 });
