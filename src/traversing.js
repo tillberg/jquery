@@ -101,7 +101,7 @@ jQuery.fn.extend({
 	},
 
 	map: function( callback ) {
-		if (this.o) { return jQuery( jQuery.map( this.o, callback ) ); }
+		if (this.o) { return jQuery.fromObj( jQuery.map( this.o, callback ) ); }
 		return this.pushStack( jQuery.map(this, function(elem, i){
 			return callback.call( elem, i, elem );
 		}));

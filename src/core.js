@@ -363,6 +363,19 @@ jQuery.extend({
 
 		return jQuery;
 	},
+	
+	fromObj: function ( obj ) {
+		// This speeds up object initialize a lot to call this directly.
+		// The slowdown is probably just the exhaustive check in isObjectLiteral.
+		// We might be able to get away with foregoing that, and just kind of hoping
+		// the object is a literal.
+		function initObj() {
+			this.o = obj;
+			return this;
+		}
+		initObj.prototype = jQuery.fn;
+		return new initObj();
+	},
 
 	// See test/unit/core.js for details concerning isFunction.
 	// Since version 1.3, DOM methods and functions like alert

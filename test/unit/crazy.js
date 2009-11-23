@@ -90,10 +90,10 @@ test( 'map', function() {
 	equals(mappedValues.size(), 3, 'Number of mapped values');
 	
 	/*
-	var obj = {};
+	var obj = {}, $obj = jQuery( obj );
 	jQuery.range(100).each(function(k,v) { obj[v] = v; });
 	function mapper1() { jQuery.map(obj, function(v) { return v; }); }
-	function mapper2() { jQuery(obj).map(function(v) { return v; }); }
+	function mapper2() { $obj.map(function(v) { return v; }); }
 	
 	function benchmark(fn, times){
 	    var t=new Date;
@@ -105,6 +105,8 @@ test( 'map', function() {
     // empty obj: about 20-30X slower, 100 elements: about 10X slower.
     // After changing to .o style:
     // empty obj: about 2X slower, 100 elements: ~1.7X slower
+	// After moving jQuery( obj ) outside of mapper2, it was only about 1.2-1.5X slower
+	// After switching to using jQuery.fromObj() internally, it was less than 10% slower.
     alert('traditional: ' + benchmark(mapper1, 3000) + ', new: ' + benchmark(mapper2, 3000));
     */
 });
