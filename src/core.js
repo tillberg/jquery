@@ -128,7 +128,12 @@ jQuery.fn = jQuery.prototype = {
 			
 		// HANDLE: $({...})
 		// This is quite experimental
-		} else if ( jQuery.isObjectLiteral( selector ) ) {
+		// I used to use jQuery.isObjectLiteral.  However, that test is quite expensive.
+		// What we really want is all objects that are not jQuery objects, since there
+		// are some existing expectations that $($obj) === $obj.
+		// This test is a bit of a hack, in that if an object with a "jquery" key defined
+		// is passed in, we'll pass it over.  But this works well enough for now.
+		} else if ( !selector.jquery && toString.call( selector ) === "[object Object]" ) {
 		    // this.o is the object literal
 			this.o = selector;
 			return this;
@@ -364,19 +369,6 @@ jQuery.extend({
 		return jQuery;
 	},
 	
-	fromObj: function ( obj ) {
-		// This speeds up object initialize a lot to call this directly.
-		// The slowdown is probably just the exhaustive check in isObjectLiteral.
-		// We might be able to get away with foregoing that, and just kind of hoping
-		// the object is a literal.
-		function initObj() {
-			this.o = obj;
-			return this;
-		}
-		initObj.prototype = jQuery.fn;
-		return new initObj();
-	},
-
 	// See test/unit/core.js for details concerning isFunction.
 	// Since version 1.3, DOM methods and functions like alert
 	// aren't supported. They return false on IE (#2968).
