@@ -415,14 +415,14 @@ jQuery.extend({
 	},
 
 	// Is a given variable defined?
-	isDefined: function(obj) {
+	isDefined: function( obj ) {
 		return typeof obj != 'undefined';
 	},
 	
 	// The original jQuery function to test for emptiness.
 	// Just call the underscore version.
 	isEmptyObject: function( obj ) {
-		return jQuery.isEmpty(obj);
+		return jQuery.isEmpty( obj );
 	},
 
 	// check if an element is in a (or is an) XML document
@@ -563,7 +563,7 @@ jQuery.extend({
 
 	map: function( elems, callback ) {
 		var ret = [], value;
-		if (jQuery.isObjectLiteral(elems)) { 
+		if ( jQuery.isObjectLiteral( elems ) ) { 
 			var ret = {};
 			for (var k in elems) {
 				value = callback( elems[ k ], k);
@@ -588,11 +588,11 @@ jQuery.extend({
 	},
 	
 	// Return an array of integers from 0 to m - 1, or m to n - 1 if n is specified.
-    range: function(m, n) {
-      if (n === undefined) { n = m; m = 0; }
-      var r = [];
-      for (var i = m; i < n; i++) { r.push(i); }
-      return jQuery(r);
+    range: function( m, n ) {
+    	if (n === undefined) { n = m; m = 0; }
+      	var r = [];
+      	for ( var i = m; i < n; i++ ) { r.push( i ); }
+      	return jQuery( r );
     },
     
 
