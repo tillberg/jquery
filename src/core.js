@@ -563,6 +563,7 @@ jQuery.extend({
 
 	map: function( elems, callback ) {
 		var ret = [], value;
+		// If we can scale down this object literal check, we can make this about 25% faster
 		if ( jQuery.isObjectLiteral( elems ) ) { 
 			var ret = {};
 			for (var k in elems) {
