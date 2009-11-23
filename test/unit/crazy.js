@@ -1,20 +1,32 @@
 module("crazy");
 
 test("Object Constructors", function() {
-	expect(6);
+	expect(4);
 	
 	ok( jQuery({}), "$({})" );
+	ok( jQuery.isObjectLiteral( jQuery({}).o ), "$({}).o is object literal" );
 	
 	var name = 'Bob Smith'
 	var obj = jQuery({name: name, age: 42});
-	equals(obj.o.name, name, '$({key: value}) === value');
-	equals(obj.size(), 2, '$({...}).size()');
+	equals(obj.o.name, name, '$({key: value}).o.key === value');
+	
+	// This test is kind of silly but demonstrates how it can be used
 	obj.o.race = 'Human';
-	equals(obj.o.race, 'Human', 'Object extension');
-	equals(obj.size(), 3, '$({...}).size()');
+	equals(obj.o.race, 'Human', '$obj.o.key = value');
+	
+});
+
+test('Size', function() {
+	expect(3);
+	
+	var obj = jQuery({name: name, age: 42});
+	equals(obj.size(), 2, '$({...}).size()');
+	
+	obj.o.race = 'Human';
+	equals(obj.size(), 3, '$({...}).size() after ad hoc object extension');
 	
 	delete obj.o.name;
-	equals(obj.size(), 2, 'Object size after delete');
+	equals(obj.size(), 2, '$({...}).size() after ad hoc delete');
 	
 });
 
