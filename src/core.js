@@ -135,6 +135,7 @@ jQuery.fn = jQuery.prototype = {
 		// is passed in, we'll pass it over.  But this works well enough for now.
 		} else if ( !selector.jquery && toString.call( selector ) === "[object Object]" ) {
 		    // this.o is the object literal
+			// We are not making a copy here!  Maybe we should.  Speed vs Ease argument ensues.
 			this.o = selector;
 			return this;
 		
@@ -379,12 +380,6 @@ jQuery.extend({
 	isArray: function( obj ) {
 		return toString.call(obj) === "[object Array]";
 	},
-	
-	// Returns true if the specified object should be treated as an array.
-	// This includes real arrays as well as jQuery objects which are arrays.
-	isLikeArray: function( a ) {
-		return jQuery.isArray( a ) || a.jquery;
-	},
 
 	isObjectLiteral: function( obj ) {
 		if ( toString.call(obj) !== "[object Object]" ) {
@@ -569,8 +564,7 @@ jQuery.extend({
 
 	map: function( elems, callback ) {
 		var ret = [], value;
-		// If we can scale down this object literal check, we can make this about 25% faster
-		if ( !jQuery.isLikeArray( elems ) ) { 
+		if ( elems.length === undefined ) { 
 			var ret = {};
 			for (var k in elems) {
 				value = callback( elems[ k ], k);
