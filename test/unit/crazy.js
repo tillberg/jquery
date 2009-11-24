@@ -107,6 +107,7 @@ test( 'map', function() {
     // empty obj: about 2X slower, 100 elements: ~1.7X slower
 	// After moving jQuery( obj ) outside of mapper2, it was only about 1.2-1.5X slower
 	// After switching to using jQuery.fromObj() internally, it was less than 10% slower.
+	// After swapping .isObjectLiteral for .isLikeArray in $.map, this was 25% faster for both.
     alert('traditional: ' + benchmark(mapper1, 3000) + ', new: ' + benchmark(mapper2, 3000));
     */
 });

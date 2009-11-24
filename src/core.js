@@ -379,6 +379,12 @@ jQuery.extend({
 	isArray: function( obj ) {
 		return toString.call(obj) === "[object Array]";
 	},
+	
+	// Returns true if the specified object should be treated as an array.
+	// This includes real arrays as well as jQuery objects which are arrays.
+	isLikeArray: function( a ) {
+		return jQuery.isArray( a ) || a.jquery;
+	},
 
 	isObjectLiteral: function( obj ) {
 		if ( toString.call(obj) !== "[object Object]" ) {
@@ -564,7 +570,7 @@ jQuery.extend({
 	map: function( elems, callback ) {
 		var ret = [], value;
 		// If we can scale down this object literal check, we can make this about 25% faster
-		if ( jQuery.isObjectLiteral( elems ) ) { 
+		if ( !jQuery.isLikeArray( elems ) ) { 
 			var ret = {};
 			for (var k in elems) {
 				value = callback( elems[ k ], k);
