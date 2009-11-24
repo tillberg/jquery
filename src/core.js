@@ -240,6 +240,10 @@ jQuery.fn = jQuery.prototype = {
 		return jQuery.each( this.o || this, callback, args );
 	},
 	
+	grep: function( a, b ) {
+		return jQuery( jQuery.grep( this.o || this, a, b, this.o ) );
+	},
+	
 	keys: function() {
 		var ret = [ ];
 		for ( var k in this.raw() ) {
@@ -548,16 +552,21 @@ jQuery.extend({
 		return first;
 	},
 
-	grep: function( elems, callback, inv ) {
-		var ret = [];
-
+	grep: function( elems, callback, inv, isObj ) {
+		isObj = isObj || elems.length === undefined;
+		var ret = isObj ? {} : [];
+		
 		// Go through the array, only saving the items
 		// that pass the validator function
-		for ( var i = 0, length = elems.length; i < length; i++ ) {
-			if ( !inv !== !callback( elems[ i ], i ) ) {
-				ret.push( elems[ i ] );
+		jQuery.each( elems, function( k, v ) {
+			if ( !inv !== !callback( v, k ) ) {
+				if ( isObj ) {
+					ret[ k ] = v;
+				} else { 
+					ret.push( v );
+				}
 			}
-		}
+		});
 
 		return ret;
 	},

@@ -139,7 +139,7 @@ test( 'Chaining', function() {
 	function nodify( v, k ) { return '<' + k + '>' + v + '</' + k + '>'; }
 	var html = jQuery( { div:3, span: 5, code: 7 } ).map( nodify ).join( '' );
 	equals( html, '<div>3</div><span>5</span><code>7</code>', 'Chain map & join' );
-	equals( jQuery( html ).filter( 'div' ).text(), '3', 'Fun stuff after the chain.  Not all the useful, though.' );
+	equals( jQuery( html ).filter( 'div' ).text(), '3', 'Fun stuff after the chain.  Not all that useful, though.' );
 });
 
 test( 'Prototyping', function() {
@@ -151,4 +151,16 @@ test( 'Prototyping', function() {
 	
 	var bob = Person.make();
 	ok( bob.is( Thing ), 'Proto.is' );
+});
+
+test( 'grep', function() {
+	expect(5);
+	
+	equals( jQuery.grep( [ 1, 2, 3, 4, 5, 6 ], function(v, k) { return v % 2 === 0; } )[ 1 ], 4, '$.grep( [ ... ], cb )');
+	equals( jQuery( [ 1, 2, 3, 4, 5, 6 ] ).grep( function(v, k) { return v % 2 === 0; } ).size(), 3, '$( [ ... ] ).grep( cb )');
+	
+	equals( jQuery.grep( { a: 3, b: 7, c: 5 }, function(v, k) { return k !== 'a'; } ).a, undefined, '$.grep( [ ... ], cb ).key undefined');
+	equals( jQuery.grep( { a: 3, b: 7, c: 5 }, function(v, k) { return k !== 'a'; } ).b, 7, '$.grep( [ ... ], cb ).key exists');
+	equals( jQuery( { a: 3, b: 7, c: 5 } ).grep( function(v, k) { return k !== 'a'; } ).size(), 2, '$( [ ... ] ).grep( cb ).size()');
+	
 });
