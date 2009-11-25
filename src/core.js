@@ -388,6 +388,27 @@ jQuery.extend = jQuery.fn.extend = function() {
 	return target;
 };
 
+
+// Find the nth value in a.  If y, then return the nth key instead.
+// If n is negative, return the last key/value for objects, or the
+// mod-indexed key/value for arrays.
+function nth( a, n, y ) {
+	var l = a.length;
+	if ( l !== undefined ) { 
+		if ( n < 0 ) { n = (n + l) % l; }
+		// Some parentheses would be nice here... but they cost bytes
+		return y ? l > 0 ? n : undefined : a[ n ];
+	}
+	
+	var v;
+	for ( var k in a ) {
+		v = y ? k : a[ k ];
+		if (n === 0) { return v; }
+		n--;
+	}
+	return v;
+}
+
 jQuery.extend({
 	noConflict: function( deep ) {
 		window.$ = _$;
@@ -649,60 +670,32 @@ jQuery.extend({
 		return r;
 	},
 	
-	// Find the nth value in a.  If y, then return the nth key instead.
-	// If n is negative, return the last key/value for objects, or the
-	// mod-indexed key/value for arrays.
-	nth: function( a, n, y ) {
-		if ( a.length !== undefined ) { 
-			if ( n < 0 ) { n = n % a.length; }
-			return y ? n : a[ n ];
-		}
-		
-		var v;
-		for ( var k in a ) {
-			v = y ? k : a[ k ];
-			if (n === 0) { return v; }
-			n--;
-		}
-		return v;
+	/*
+	// Do we want to provide these?  The object form is kind of weird, and
+	// the array form is not very useful, either.
+	nthVal: function( a, n ) {
+		return nth( a, n );
 	},
 	
 	nthKey: function( a, n ) {
-		return jQuery.nth( a, n, 1 );
+		return nth( a, n, 1 );
 	},
+	*/
 	
 	front: function( a ) {
-		// If o is an array, return the 0th element (undefined if empty)
-		if ( a.length !== undefined ) { return a[ 0 ]; }
-		// Otherwise, return the first value we see on iterating through a
-		for ( var k in a ) { return a[ k ]; }
-		// If there's nothing, then we implicitly return undefined
+		return nth( a, 0 );
 	},
 	
 	frontKey: function( a ) {
-		// If o is an array, return 0 iff a.length > 0
-		if ( a.length !== undefined ) { return a.length > 0 ? 0 : undefined; }
-		// Otherwise, return the first value we see on iterating through a
-		for ( var k in a ) { return k; }
-		// If there's nothing, then we implicitly return undefined
+		return nth( a, 0, 1 );
 	},
 	
 	back: function( a ) {
-		// If o is an array, return the 0th element (undefined if empty)
-		if ( a.length !== undefined ) { return a[ a.length - 1 ]; }
-		// Otherwise, return the first value we see on iterating through a
-		var l;
-		for ( var k in a ) { l = a[ k ]; }
-		return l;
+		return nth( a, -1 );
 	},
 	
 	backKey: function( a ) {
-		// If o is an array, return (a.length - 1) iff a.length > 0
-		if ( a.length !== undefined ) { return a.length > 0 ? a.length - 1 : undefined; }
-		// Otherwise, return the last value we see on iterating through a
-		var l;
-		for ( var k in a ) { l = k; }
-		return l;
+		return nth( a, -1, 1 );
 	},
 	
 	// Return an array of integers from 0 to m - 1, or m to n - 1 if n is specified.
