@@ -252,6 +252,10 @@ jQuery.fn = jQuery.prototype = {
 		return jQuery.frontKey( this.o || this );
 	},
 	
+	peek: function() {
+		return this[ this.length - 1 ];
+	},
+	
 	keys: function() {
 		var ret = [ ];
 		for ( var k in this.raw() ) {

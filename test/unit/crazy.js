@@ -196,10 +196,11 @@ test( 'front & frontKey', function() {
 	equals( jQuery( { a: 7, b: 9, c: 11 } ).frontKey(), 'a', '$( { ... } ).frontKey()');
 });
 
-test( 'pop', function() {
-	expect(3);
+test( 'pop, peek', function() {
+	expect(4);
 	
 	var $o = jQuery( [1, 2, 3] );
+	equals( $o.peek(), 3, '$( [ ... ].peek() )');
 	equals( $o.pop(), 3, '$( [ ... ] ).pop() return value');
 	equals( $o.size(), 2, '$( [ ... ] ).pop() removes element');
 	
