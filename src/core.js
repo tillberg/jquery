@@ -252,6 +252,14 @@ jQuery.fn = jQuery.prototype = {
 		return jQuery.frontKey( this.o || this );
 	},
 	
+	back: function() {
+		return jQuery.back( this.o || this );
+	},
+	
+	backKey: function() {
+		return jQuery.backKey( this.o || this );
+	},
+	
 	mapToObj: function( cb ) {
 		return jQuery( jQuery.mapToObj( this.o || this, cb ) );
 	},
@@ -659,11 +667,29 @@ jQuery.extend({
 	},
 	
 	frontKey: function( a ) {
-		// If o is an array, return 0 iff a[ 0 ] is defined
-		if ( a.length !== undefined ) { return a[ 0 ] !== undefined ? 0 : undefined; }
+		// If o is an array, return 0 iff a.length > 0
+		if ( a.length !== undefined ) { return a.length > 0 ? 0 : undefined; }
 		// Otherwise, return the first value we see on iterating through a
 		for ( var k in a ) { return k; }
 		// If there's nothing, then we implicitly return undefined
+	},
+	
+	back: function( a ) {
+		// If o is an array, return the 0th element (undefined if empty)
+		if ( a.length !== undefined ) { return a[ a.length - 1 ]; }
+		// Otherwise, return the first value we see on iterating through a
+		var l;
+		for ( var k in a ) { l = a[ k ]; }
+		return l;
+	},
+	
+	backKey: function( a ) {
+		// If o is an array, return (a.length - 1) iff a.length > 0
+		if ( a.length !== undefined ) { return a.length > 0 ? a.length - 1 : undefined; }
+		// Otherwise, return the last value we see on iterating through a
+		var l;
+		for ( var k in a ) { l = k; }
+		return l;
 	},
 	
 	// Return an array of integers from 0 to m - 1, or m to n - 1 if n is specified.

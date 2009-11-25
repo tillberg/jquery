@@ -196,6 +196,34 @@ test( 'front & frontKey', function() {
 	equals( jQuery( { a: 7, b: 9, c: 11 } ).frontKey(), 'a', '$( { ... } ).frontKey()');
 });
 
+test( 'back & backKey', function() {
+	expect( 16 );
+	
+	equals( jQuery.back( [] ), undefined, '$.back( [] )');
+	equals( jQuery.backKey( [] ), undefined, '$.backKey( [] )');
+	
+	equals( jQuery.back( [ 4, 5, 6 ] ), 6, '$.back( [ ... ] )');
+	equals( jQuery.backKey( [ 4, 5, 6 ] ), 2, '$.backKey( [ ... ] )');
+	
+	equals( jQuery.back( {} ), undefined, '$.back( {} )');
+	equals( jQuery.backKey( {} ), undefined, '$.backKey( {} )');
+	
+	equals( jQuery.back( { a: 7, b: 9, c: 11 } ), 11, '$.back( { ... } )');
+	equals( jQuery.backKey( { a: 7, b: 9, c: 11 } ), 'c', '$.backKey( { ... } )');
+	
+	equals( jQuery( [] ).back(), undefined, '$( [] ).back()');
+	equals( jQuery( [] ).backKey(), undefined, '$( [] ).backKey()');
+	
+	equals( jQuery( [ 4, 5, 6 ] ).back(), 6, '$( [ ... ] ).back()');
+	equals( jQuery( [ 4, 5, 6 ] ).backKey(), 2, '$( [ ... ] ).backKey()');
+	
+	equals( jQuery( {} ).back(), undefined, '$( {} ).back()');
+	equals( jQuery( {} ).backKey(), undefined, '$( {} ).backKey()');
+	
+	equals( jQuery( { a: 7, b: 9, c: 11 } ).back(), 11, '$( { ... } ).back()');
+	equals( jQuery( { a: 7, b: 9, c: 11 } ).backKey(), 'c', '$( { ... } ).backKey()');
+});
+
 test( 'pop, peek', function() {
 	expect( 4 );
 	
