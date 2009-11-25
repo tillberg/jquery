@@ -173,26 +173,25 @@ test( 'front & frontKey', function() {
 	
 	equals( jQuery.front( [] ), undefined, '$.front( [] )');
 	equals( jQuery.frontKey( [] ), undefined, '$.frontKey( [] )');
-
+	
 	equals( jQuery.front( [ 4, 5, 6 ] ), 4, '$.front( [ ... ] )');
 	equals( jQuery.frontKey( [ 4, 5, 6 ] ), 0, '$.frontKey( [ ... ] )');
 	
 	equals( jQuery.front( {} ), undefined, '$.front( {} )');
 	equals( jQuery.frontKey( {} ), undefined, '$.frontKey( {} )');
-
+	
 	equals( jQuery.front( { a: 7, b: 9, c: 11 } ), 7, '$.front( { ... } )');
 	equals( jQuery.frontKey( { a: 7, b: 9, c: 11 } ), 'a', '$.frontKey( { ... } )');
 	
 	equals( jQuery( [] ).front(), undefined, '$( [] ).front()');
 	equals( jQuery( [] ).frontKey(), undefined, '$( [] ).frontKey()');
-
+	
 	equals( jQuery( [ 4, 5, 6 ] ).front(), 4, '$( [ ... ] ).front()');
 	equals( jQuery( [ 4, 5, 6 ] ).frontKey(), 0, '$( [ ... ] ).frontKey()');
 	
 	equals( jQuery( {} ).front(), undefined, '$( {} ).front()');
 	equals( jQuery( {} ).frontKey(), undefined, '$( {} ).frontKey()');
-
+	
 	equals( jQuery( { a: 7, b: 9, c: 11 } ).front(), 7, '$( { ... } ).front()');
 	equals( jQuery( { a: 7, b: 9, c: 11 } ).frontKey(), 'a', '$( { ... } ).frontKey()');
-	
 });
