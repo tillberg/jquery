@@ -252,6 +252,10 @@ jQuery.fn = jQuery.prototype = {
 		return jQuery.frontKey( this.o || this );
 	},
 	
+	mapToObj: function( cb ) {
+		return jQuery( jQuery.mapToObj( this.o || this, cb ) );
+	},
+	
 	peek: function() {
 		return this[ this.length - 1 ];
 	},
@@ -608,6 +612,27 @@ jQuery.extend({
 		}
 
 		return ret.concat.apply( [], ret );
+	},
+	
+	mapToArr: function( o, cb ) {
+		return this.map( o, cb ).vals();
+		// It might be nice to have a version of this where the cb
+		// emits arrays that get concatted?
+	},
+	
+	mapToObj: function( o, cb ) {
+		var r = {};
+		jQuery.each( o, function( k, v ) {
+			var x = cb( v, k );
+			if ( jQuery.isArray( x ) ) {
+				// Return value was of form [ k, v ]
+				r[ x[ 0 ] ] = x[ 1 ];
+			} else {
+				// Return value was of form { k1: v1, ... }
+				jQuery.extend( r, x );
+			}
+		});
+		return r;
 	},
 	
 	nth: function( a, n ) {

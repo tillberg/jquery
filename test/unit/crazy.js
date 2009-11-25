@@ -169,7 +169,7 @@ test( 'grep', function() {
 // defined for jQuery objects, and maps from a many-element array
 // to a single-element array, which is not what we want here.
 test( 'front & frontKey', function() {
-	expect(16);
+	expect( 16 );
 	
 	equals( jQuery.front( [] ), undefined, '$.front( [] )');
 	equals( jQuery.frontKey( [] ), undefined, '$.frontKey( [] )');
@@ -197,7 +197,7 @@ test( 'front & frontKey', function() {
 });
 
 test( 'pop, peek', function() {
-	expect(4);
+	expect( 4 );
 	
 	var $o = jQuery( [7, 6, 5] );
 	equals( $o.peek(), 5, '$( [ ... ].peek() )');
@@ -206,4 +206,18 @@ test( 'pop, peek', function() {
 	
 	equals( jQuery( [] ).pop(), undefined, '$( [] ).pop()')
 	
+});
+
+test( 'mapToObj', function() {
+	expect( 3 );
+	
+	var str = 'a=4,b=7,c=9';
+	var obj = jQuery.mapToObj( str.split( ',' ), function( v ) { var a = v.split( '=' ); var d = {}; d[ a[ 0 ] ] = a[ 1 ]; return d; } );
+	equals( obj.b, 7, '$.mapToObj with object callback return' );
+	var obj2 = jQuery.mapToObj( str.split( ',' ), function( v ) { var a = v.split( '=' ); return [ a[ 0 ], a[ 1 ] ]; } );
+	equals( obj2.c, 9, '$.mapToObj with array callback return' );
+
+	var obj3 = jQuery( str.split( ',' ) ).mapToObj( function( v ) { var a = v.split( '=' ); return [ a[ 0 ], a[ 1 ] ]; } );
+	equals( obj3.o.a, 4, '$.mapToObj inline' );
+
 });
