@@ -309,7 +309,8 @@ jQuery.fn = jQuery.prototype = {
 	push: push,
 	sort: [].sort,
 	splice: [].splice,
-	reverse: [].reverse
+	reverse: [].reverse,
+	pop: [].pop
 };
 
 // Give the init function the jQuery prototype for later instantiation
