@@ -164,3 +164,35 @@ test( 'grep', function() {
 	equals( jQuery( { a: 3, b: 7, c: 5 } ).grep( function(v, k) { return k !== 'a'; } ).size(), 2, '$( [ ... ] ).grep( cb ).size()');
 	
 });
+
+// Note: I use "front" instead of "first" because first is already
+// defined for jQuery objects, and maps from a many-element array
+// to a single-element array, which is not what we want here.
+test( 'front & frontKey', function() {
+	expect(16);
+	
+	equals( jQuery.front( [] ), undefined, '$.front( [] )');
+	equals( jQuery.frontKey( [] ), undefined, '$.frontKey( [] )');
+
+	equals( jQuery.front( [ 4, 5, 6 ] ), 4, '$.front( [ ... ] )');
+	equals( jQuery.frontKey( [ 4, 5, 6 ] ), 0, '$.frontKey( [ ... ] )');
+	
+	equals( jQuery.front( {} ), undefined, '$.front( {} )');
+	equals( jQuery.frontKey( {} ), undefined, '$.frontKey( {} )');
+
+	equals( jQuery.front( { a: 7, b: 9, c: 11 } ), 7, '$.front( { ... } )');
+	equals( jQuery.frontKey( { a: 7, b: 9, c: 11 } ), 'a', '$.frontKey( { ... } )');
+	
+	equals( jQuery( [] ).front(), undefined, '$( [] ).front()');
+	equals( jQuery( [] ).frontKey(), undefined, '$( [] ).frontKey()');
+
+	equals( jQuery( [ 4, 5, 6 ] ).front(), 4, '$( [ ... ] ).front()');
+	equals( jQuery( [ 4, 5, 6 ] ).frontKey(), 0, '$( [ ... ] ).frontKey()');
+	
+	equals( jQuery( {} ).front(), undefined, '$( {} ).front()');
+	equals( jQuery( {} ).frontKey(), undefined, '$( {} ).frontKey()');
+
+	equals( jQuery( { a: 7, b: 9, c: 11 } ).front(), 7, '$( { ... } ).front()');
+	equals( jQuery( { a: 7, b: 9, c: 11 } ).frontKey(), 'a', '$( { ... } ).frontKey()');
+	
+});

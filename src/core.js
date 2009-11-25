@@ -243,6 +243,14 @@ jQuery.fn = jQuery.prototype = {
 	grep: function( a, b ) {
 		return jQuery( jQuery.grep( this.o || this, a, b, this.o ) );
 	},
+
+	front: function() {
+		return jQuery.front( this.o || this );
+	},
+	
+	frontKey: function() {
+		return jQuery.frontKey( this.o || this );
+	},
 	
 	keys: function() {
 		var ret = [ ];
@@ -595,6 +603,31 @@ jQuery.extend({
 		}
 
 		return ret.concat.apply( [], ret );
+	},
+	
+	nth: function( a, n ) {
+		if ( a.length !== undefined ) { return a[ n ]; }
+		
+		for ( var k in a ) { 
+			if (n === 0) { return a[ k ]; }
+			n--;
+		}
+	},
+	
+	front: function( a ) {
+		// If o is an array, return the 0th element (undefined if empty)
+		if ( a.length !== undefined ) { return a[ 0 ]; }
+		// Otherwise, return the first value we see on iterating through a
+		for ( var k in a ) { return a[ k ]; }
+		// If there's nothing, then we implicitly return undefined
+	},
+	
+	frontKey: function( a ) {
+		// If o is an array, return 0 iff a[ 0 ] is defined
+		if ( a.length !== undefined ) { return a[ 0 ] !== undefined ? 0 : undefined; }
+		// Otherwise, return the first value we see on iterating through a
+		for ( var k in a ) { return k; }
+		// If there's nothing, then we implicitly return undefined
 	},
 	
 	// Return an array of integers from 0 to m - 1, or m to n - 1 if n is specified.
