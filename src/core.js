@@ -649,13 +649,26 @@ jQuery.extend({
 		return r;
 	},
 	
-	nth: function( a, n ) {
-		if ( a.length !== undefined ) { return a[ n ]; }
+	// Find the nth value in a.  If y, then return the nth key instead.
+	// If n is negative, return the last key/value for objects, or the
+	// mod-indexed key/value for arrays.
+	nth: function( a, n, y ) {
+		if ( a.length !== undefined ) { 
+			if ( n < 0 ) { n = n % a.length; }
+			return y ? n : a[ n ];
+		}
 		
-		for ( var k in a ) { 
-			if (n === 0) { return a[ k ]; }
+		var v;
+		for ( var k in a ) {
+			v = y ? k : a[ k ];
+			if (n === 0) { return v; }
 			n--;
 		}
+		return v;
+	},
+	
+	nthKey: function( a, n ) {
+		return jQuery.nth( a, n, 1 );
 	},
 	
 	front: function( a ) {
