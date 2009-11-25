@@ -199,9 +199,9 @@ test( 'front & frontKey', function() {
 test( 'pop, peek', function() {
 	expect(4);
 	
-	var $o = jQuery( [1, 2, 3] );
-	equals( $o.peek(), 3, '$( [ ... ].peek() )');
-	equals( $o.pop(), 3, '$( [ ... ] ).pop() return value');
+	var $o = jQuery( [7, 6, 5] );
+	equals( $o.peek(), 5, '$( [ ... ].peek() )');
+	equals( $o.pop(), 5, '$( [ ... ] ).pop() return value');
 	equals( $o.size(), 2, '$( [ ... ] ).pop() removes element');
 	
 	equals( jQuery( [] ).pop(), undefined, '$( [] ).pop()')
