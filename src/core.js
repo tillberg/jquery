@@ -243,22 +243,6 @@ jQuery.fn = jQuery.prototype = {
 	grep: function( a, b ) {
 		return jQuery( jQuery.grep( this.o || this, a, b, this.o ) );
 	},
-
-	front: function() {
-		return jQuery.front( this.o || this );
-	},
-	
-	frontKey: function() {
-		return jQuery.frontKey( this.o || this );
-	},
-	
-	back: function() {
-		return jQuery.back( this.o || this );
-	},
-	
-	backKey: function() {
-		return jQuery.backKey( this.o || this );
-	},
 	
 	mapToObj: function( cb ) {
 		return jQuery( jQuery.mapToObj( this.o || this, cb ) );
@@ -717,6 +701,12 @@ jQuery.extend({
 		msie: /msie/.test( userAgent ) && !/opera/.test( userAgent ),
 		mozilla: /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test( userAgent )
 	}
+});
+
+jQuery.map( 'front,frontKey,back,backKey'.split( ',' ), function( x ) {
+	jQuery.fn[ x ] = function() { 
+		return jQuery[ x ]( this.o || this );
+	};
 });
 
 if ( indexOf ) {
