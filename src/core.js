@@ -138,14 +138,6 @@ jQuery.fn = jQuery.prototype = {
 			// We are not making a copy here!  Maybe we should.  Speed vs Ease argument ensues.
 			this.o = selector;
 			return this;
-		
-		// HANDLE: $([...])
-		// Also quite experimental
-		} else if ( jQuery.isArray( selector ) ) {
-			// Method borrowed from pushStack:
-			this.length = 0;
-			push.apply( this, selector );
-			return this;
 		}
 
 		if (selector.selector !== undefined) {
