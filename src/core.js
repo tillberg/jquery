@@ -369,14 +369,13 @@ jQuery.extend = jQuery.fn.extend = function() {
 // If n is negative, return the last key/value for objects, or the
 // mod-indexed key/value for arrays.
 function nth( a, n, y ) {
-	var l = a.length;
+	var l = a.length, v;
 	if ( l !== undefined ) { 
 		if ( n < 0 ) { n = (n + l) % l; }
 		// Some parentheses would be nice here... but they cost bytes
 		return y ? l > 0 ? n : undefined : a[ n ];
 	}
 	
-	var v;
 	for ( var k in a ) {
 		v = y ? k : a[ k ];
 		if (n === 0) { return v; }
