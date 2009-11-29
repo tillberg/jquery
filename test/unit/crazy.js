@@ -294,3 +294,12 @@ test( 'reverse, reversed', function() {
 	equals( $j.reverse()[0], 7, '$( ... ).reverse()' );
 	equals( $j[0], 7, '$( ... ).reverse() does alter original' );
 });
+
+test( 'random', function() {
+	expect( 3 );
+	
+	equals( jQuery( [] ).random()[ 0 ], undefined, '$( [] ).random()');
+	equals( jQuery( [ 7 ] ).random()[ 0 ], 7, '$( [ 7 ] ).random()');
+	equals( jQuery( [ 7, 6, 5, 4 ] ).random().size(), 1, '$( [ ... ] ).random().size()');
+
+});

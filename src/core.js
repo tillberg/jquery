@@ -294,6 +294,10 @@ jQuery.fn = jQuery.prototype = {
 		return jQuery( this ).reverse();
 	},
 	
+	random: function() {
+		return this.eq( jQuery.randInt( this.length ) );
+	},
+	
 	// For internal use only.
 	// Behaves like an Array's method, not like a jQuery method.
 	push: push,
@@ -690,6 +694,15 @@ jQuery.extend({
 			if ( !cb || cb( v, k ) ) { n++; }
 		});
 		return n;
+	},
+	
+	// Generate a random number from 0 to l or l to h, exclusive.
+	randInt: function( l, h ) {
+		if ( h === undefined ) {
+			h = l;
+			l = 0;
+		}
+		return Math.floor( Math.random() * (h - l) ) + l;
 	},
 	
 	// Use of jQuery.browser is deprecated.
