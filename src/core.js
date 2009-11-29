@@ -624,11 +624,13 @@ jQuery.extend({
 		return ret.concat.apply( [], ret );
 	},
 	
+	/*
 	mapToArr: function( o, cb ) {
 		return this.map( o, cb ).vals();
 		// It might be nice to have a version of this where the cb
 		// emits arrays that get concatted?
 	},
+	*/
 	
 	mapToObj: function( o, cb ) {
 		var r = {};
