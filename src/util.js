@@ -23,47 +23,10 @@ function toInt(n) { return parseInt(n, 10); }
 
 function f(x) { return (x === undefined || x === '' || x === null || isNaN(x)) ? undefined : parseFloat('' + x); }
 
-// Filter an object according to the specified filter function
-$.grepobj = function(obj, fn) {
-  var newobj = {};
-  $.each(obj, function(key, val) {
-      if (fn(key, val)) { newobj[key] = val; }
-    });
-  return newobj;
-};
-
-$.arrsToDict = function(keys, vals) {
-    var d = {};
-    $.each(keys, function(i, k) { d[k] = vals[i]; });
-    return d;
-};
-
-// Return the first element in an array or object (matching the specified functional condition, if specified)
-$.first = function(obj, fn) {
-  var rval;
-  $.each(obj, function(key, val) {
-      if (!fn || fn(val)) {
-	rval = val;
-	return false;
-      }
-    });
-  return rval;
-};
-
 $.count = function(obj, fn) {
   var i = 0;
   $.each(obj, function(key, val) { if (!fn || fn(val)) { i++; } });
   return i;
-};
-
-// Build an object by mapping an array onto a function and taking from [key, value] 
-$.mapDict = function(arr, fn) {
-  var dict = {};
-  $.each(arr, function(index, item) {
-      var arr = fn(item, index);
-      dict[arr[0]] = arr[1];
-    });
-  return dict;
 };
 
 // Returns all values in b that differ from the corresponding values in a (useful for filtering progressive CSS applications, etc)
@@ -73,14 +36,6 @@ $.grepDiff = function(a, b) {
       if (!a || a[key] !== val) { c[key] = val; }
     });
   return c;
-};
-
-// Return an array of integers from 0 to m - 1, or m to n - 1 if n is specified.
-$.range = function(m, n) {
-  if (n === undefined) { n = m; m = 0; }
-  var range = [];
-  for (var i = m; i < n; i++) { range.push(i); }
-  return range;
 };
 
 Array.prototype.contains = function(obj) {
