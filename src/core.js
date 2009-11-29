@@ -502,10 +502,10 @@ jQuery.extend({
 		return ret;
 	},
 
-	map: function( elems, callback ) {
-		var ret = [], value;
-		if ( elems.length === undefined ) { 
-			var ret = {};
+	map: function( elems, callback, isObj ) {
+		isObj = isObj || elems.length === undefined;
+		var ret = isObj ? {} : [], value;
+		if ( isObj ) { 
 			for (var k in elems) {
 				value = callback( elems[ k ], k);
 				if (value != null) {

@@ -72,6 +72,7 @@ jQuery.fn.extend({
 		return jQuery( this ).reverse();
 	},
 	
+	// Filters the array, reducing it down to one random element from the list
 	random: function() {
 		return this.eq( jQuery.randInt( this.length ) );
 	},
