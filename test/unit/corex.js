@@ -1,4 +1,4 @@
-module('crazy');
+module('corex');
 
 test( 'Object Constructor', function() {
 	expect( 4 );
