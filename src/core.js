@@ -624,14 +624,6 @@ jQuery.extend({
 		return ret.concat.apply( [], ret );
 	},
 	
-	/*
-	mapToArr: function( o, cb ) {
-		return this.map( o, cb ).vals();
-		// It might be nice to have a version of this where the cb
-		// emits arrays that get concatted?
-	},
-	*/
-	
 	mapToObj: function( o, cb ) {
 		var r = {};
 		jQuery.each( o, function( k, v ) {
@@ -646,18 +638,6 @@ jQuery.extend({
 		});
 		return r;
 	},
-	
-	/*
-	// Do we want to provide these?  The object form is kind of weird, and
-	// the array form is not very useful, either.
-	nthVal: function( a, n ) {
-		return nth( a, n );
-	},
-	
-	nthKey: function( a, n ) {
-		return nth( a, n, 1 );
-	},
-	*/
 	
 	front: function( a ) {
 		return nth( a, 0 );
