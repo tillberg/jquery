@@ -38,6 +38,7 @@
             <fileset dir="${SRC_DIR}" includes="json2.js" />
             <fileset dir="${SRC_DIR}" includes="intro.js" />
             <fileset dir="${SRC_DIR}" includes="core.js" />
+            <fileset dir="${SRC_DIR}" includes="corex.js" />
             <fileset dir="${SRC_DIR}" includes="proto.js" />
             <fileset dir="${SRC_DIR}" includes="data.js" />
             <fileset dir="${SRC_DIR}" includes="event.js" />
