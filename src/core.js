@@ -662,7 +662,7 @@ jQuery.extend({
     },
     
 	// Return a filtered copy of o, including only the keys in fields
-	splice: function( o, fields ) {
+	filterByKey: function( o, fields ) {
 		var r = {};
 	  	jQuery.each( fields, function( i, f ) {
 	    	r[ f ] = o[ f ];
@@ -698,7 +698,7 @@ jQuery.extend({
 
 // Attach inline versions of simple object/array methods to jQuery.fn
 // This is more compact than defining them inline above
-jQuery.map( 'front,frontKey,back,backKey,splice,size,grepDiff'.split( ',' ), function( x ) {
+jQuery.map( 'front,frontKey,back,backKey,filterByKey,size,grepDiff'.split( ',' ), function( x ) {
 	jQuery.fn[ x ] = function( a ) { 
 		return jQuery[ x ]( this.o || this, a );
 	};

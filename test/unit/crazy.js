@@ -250,15 +250,15 @@ test( 'mapToObj', function() {
 
 });
 
-test( 'splice', function() {
+test( 'filterByKey', function() {
 	expect( 3 );
 	
 	var obj = { a: 3, b: 5, c: 7, d: 9, e: 11 };
 	var fields = [ 'a', 'd' ];
-	equals( jQuery.splice( obj, fields ).a, 3, '$.splice( { ... }, [ ... ] ).includedKey' );
-	equals( jQuery.splice( obj, fields ).b, undefined, '$.splice( { ... }, [ ... ] ).excludedKey' );
+	equals( jQuery.filterByKey( obj, fields ).a, 3, '$.filterByKey( { ... }, [ ... ] ).includedKey' );
+	equals( jQuery.filterByKey( obj, fields ).b, undefined, '$.filterByKey( { ... }, [ ... ] ).excludedKey' );
 
-	equals( jQuery( obj ).splice( fields ).d, 9, '$.splice( { ... }, [ ... ] ).includedKey' );
+	equals( jQuery( obj ).filterByKey( fields ).d, 9, '$.filterByKey( { ... }, [ ... ] ).includedKey' );
 	
 });
 
