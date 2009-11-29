@@ -172,6 +172,22 @@ jQuery.extend({
 		return n;
 	},
 	
+	// Reduce o into res using cb
+	reduce: function( o, res, cb, isObj ) {
+		isObj = isObj || o.length === undefined;
+		// If this is just an array and JS 1.8 reduce is available, use it (untested)
+		if (!isObj && o.reduce) return o.reduce( cb, res );
+		jQuery.each( o, function( v, k ) {
+			res = cb( res, v, k );
+		});
+		return res;
+	},
+	
+	// Slices the array, returning all elements after the 1, or i-th, if specified (and i > 0)
+	rest: function( a, i ) {
+		return [].slice.call( a, i || 1 );
+	},
+	
 	// Generate a random number from 0 to l or l to h, exclusive.
 	randInt: function( l, h ) {
 		if ( h === undefined ) {
