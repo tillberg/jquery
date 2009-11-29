@@ -652,6 +652,7 @@ jQuery.extend({
       	return jQuery( r );
     },
     
+	// Return a filtered copy of o, including only the keys in fields
 	splice: function( o, fields ) {
 		var r = {};
 	  	jQuery.each( fields, function( i, f ) {
