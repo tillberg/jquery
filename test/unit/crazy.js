@@ -249,3 +249,15 @@ test( 'mapToObj', function() {
 	equals( obj3.o.a, 4, '$.mapToObj inline' );
 
 });
+
+test( 'splice', function() {
+	expect( 3 );
+	
+	var obj = { a: 3, b: 5, c: 7, d: 9, e: 11 };
+	var fields = [ 'a', 'd' ];
+	equals( jQuery.splice( obj, fields ).a, 3, '$.splice( { ... }, [ ... ] ).includedKey' );
+	equals( jQuery.splice( obj, fields ).b, undefined, '$.splice( { ... }, [ ... ] ).excludedKey' );
+
+	equals( jQuery( obj ).splice( fields ).d, 9, '$.splice( { ... }, [ ... ] ).includedKey' );
+	
+});

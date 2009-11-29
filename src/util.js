@@ -23,15 +23,6 @@ function toInt(n) { return parseInt(n, 10); }
 
 function f(x) { return (x === undefined || x === '' || x === null || isNaN(x)) ? undefined : parseFloat('' + x); }
 
-// Splice an object, returning an object obtained by copying all values corresponding to the keys specified in fields
-$.splice = function(obj, fields) {
-  var ret = {};
-  $.each(fields, function(i, field) {
-      ret[field] = obj[field];
-    });
-  return ret;
-};
-
 // Filter an object according to the specified filter function
 $.grepobj = function(obj, fn) {
   var newobj = {};

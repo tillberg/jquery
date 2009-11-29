@@ -663,6 +663,13 @@ jQuery.extend({
       	return jQuery( r );
     },
     
+	splice: function( o, fields ) {
+		var r = {};
+	  	jQuery.each( fields, function( i, f ) {
+	    	r[ f ] = o[ f ];
+	    });
+		return r;
+	},
 
 	// Use of jQuery.browser is deprecated.
 	// It's included for backwards compatibility and plugins,
@@ -676,9 +683,11 @@ jQuery.extend({
 	}
 });
 
-jQuery.map( 'front,frontKey,back,backKey'.split( ',' ), function( x ) {
-	jQuery.fn[ x ] = function() { 
-		return jQuery[ x ]( this.o || this );
+// Attach inline versions of simple object/array methods to jQuery.fn
+// This is more compact than defining them inline above
+jQuery.map( 'front,frontKey,back,backKey,splice'.split( ',' ), function( x ) {
+	jQuery.fn[ x ] = function( a ) { 
+		return jQuery[ x ]( this.o || this, a );
 	};
 });
 
