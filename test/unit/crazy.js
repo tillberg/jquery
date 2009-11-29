@@ -261,3 +261,17 @@ test( 'splice', function() {
 	equals( jQuery( obj ).splice( fields ).d, 9, '$.splice( { ... }, [ ... ] ).includedKey' );
 	
 });
+
+test( 'size', function() {
+	expect( 6 );
+	
+	equals( jQuery.size( [] ), 0, 'jQuery.size( [] )');
+	equals( jQuery.size( {} ), 0, 'jQuery.size( {} )');
+
+	equals( jQuery( [] ).size(), 0, 'jQuery( [] ).size()');
+	equals( jQuery( {} ).size(), 0, 'jQuery( {} ).size()');
+	
+	equals( jQuery( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] ).size( function( v ) { return v % 2 == 0; } ), 4, 'jQuery( [ ... ] ).size( cb )');
+	equals( jQuery( { a: 3, b: 5, c: 7, d: 9, e: 11 } ).size( function( v ) { return v % 3 == 0; } ), 2, 'jQuery( { ... } ).size( cb )');
+});
+

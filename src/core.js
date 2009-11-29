@@ -159,17 +159,6 @@ jQuery.fn = jQuery.prototype = {
 	// The default length of a jQuery object is 0
 	length: 0,
 
-	// The number of elements contained in the matched element set
-	size: function() {
-		// If this is a normal jQuery object, return the array length
-		if (!this.o) { return this.length; }
-		
-		// If this holds an object literal, count the number of keys
-		var n = 0;
-		for (var k in this.o) { n++; }
-		return n;
-	},
-	
 	// Return true if the specified key is a user property defined on this object
 	// e.g. ok($({name: 'Bob'}).isUserKey('name'), ...)
 	isUserKey: function(k) {
@@ -670,7 +659,21 @@ jQuery.extend({
 	    });
 		return r;
 	},
-
+	
+	// The number of elements contained in the matched element set
+	// If cb is specified it is used as a test function
+	size: function( o, cb ) {
+		// If this is a normal jQuery object, return the array length
+		if ( !cb && o.length !== undefined ) { return o.length; }
+		
+		// If this holds an object literal, count the number of keys
+		var n = 0;
+		jQuery.each( o, function( k, v ) {
+			if ( !cb || cb( v, k ) ) { n++; }
+		});
+		return n;
+	},
+	
 	// Use of jQuery.browser is deprecated.
 	// It's included for backwards compatibility and plugins,
 	// although they should work to migrate away.
@@ -685,7 +688,7 @@ jQuery.extend({
 
 // Attach inline versions of simple object/array methods to jQuery.fn
 // This is more compact than defining them inline above
-jQuery.map( 'front,frontKey,back,backKey,splice'.split( ',' ), function( x ) {
+jQuery.map( 'front,frontKey,back,backKey,splice,size'.split( ',' ), function( x ) {
 	jQuery.fn[ x ] = function( a ) { 
 		return jQuery[ x ]( this.o || this, a );
 	};
