@@ -23,21 +23,6 @@ function toInt(n) { return parseInt(n, 10); }
 
 function f(x) { return (x === undefined || x === '' || x === null || isNaN(x)) ? undefined : parseFloat('' + x); }
 
-$.count = function(obj, fn) {
-  var i = 0;
-  $.each(obj, function(key, val) { if (!fn || fn(val)) { i++; } });
-  return i;
-};
-
-// Returns all values in b that differ from the corresponding values in a (useful for filtering progressive CSS applications, etc)
-$.grepDiff = function(a, b) {
-  var c = {};
-  $.each(b, function(key, val) {
-      if (!a || a[key] !== val) { c[key] = val; }
-    });
-  return c;
-};
-
 Array.prototype.contains = function(obj) {
   var i = this.length;
   while (i--) {
@@ -54,9 +39,6 @@ Array.prototype.reversed = function() {
   a.reverse();
   return a;
 };
-
-// Adds reverse function to jQuery selections.
-$.fn.reverse = [].reverse;
 
 // Add a class to an element on hover.  Suitable as a replacement for using :hover in CSS, for greater cross-browser compatibility
 $.fn.hoverClass = function(s, d) { return this.each(function() { s = s || 'hover'; var $t = $(this); $t.hover(function() { $t.addClass(s); }, function() { function f() { $t.removeClass(s); } if (d) { ex(f, d); } else { f(); } }) }); };
