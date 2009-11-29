@@ -284,3 +284,13 @@ test( 'grepDiff', function() {
 	equals( jQuery.grepDiff( { a: 3 }, { a: 5 }).a, 5, '$.grepDiff( { ... }, { ... }).changedKey');
 });
 
+test( 'reverse, reversed', function() {
+	expect( 4 );
+	
+	var $j = jQuery( [ 3, 7 ] );
+	equals( $j.reversed()[0], 7, '$( ... ).reversed()' );
+	equals( $j[0], 3, '$( ... ).reversed() doesn\'t alter original' );
+	
+	equals( $j.reverse()[0], 7, '$( ... ).reverse()' );
+	equals( $j[0], 7, '$( ... ).reverse() does alter original' );
+});

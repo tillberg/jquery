@@ -284,13 +284,21 @@ jQuery.fn = jQuery.prototype = {
 	is: function( selector ) {
 		return !!selector && jQuery.filter( selector, this ).length > 0;
 	},
-
+	
+	reverse: function() {
+		[].reverse.call( this );
+		return this;
+	},
+	
+	reversed: function() {
+		return jQuery( this ).reverse();
+	},
+	
 	// For internal use only.
 	// Behaves like an Array's method, not like a jQuery method.
 	push: push,
 	sort: [].sort,
 	splice: [].splice,
-	reverse: [].reverse,
 	pop: [].pop
 };
 
