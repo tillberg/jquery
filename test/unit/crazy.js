@@ -275,3 +275,12 @@ test( 'size', function() {
 	equals( jQuery( { a: 3, b: 5, c: 7, d: 9, e: 11 } ).size( function( v ) { return v % 3 == 0; } ), 2, 'jQuery( { ... } ).size( cb )');
 });
 
+test( 'grepDiff', function() {
+	expect( 4 );
+	
+	equals( jQuery.grepDiff( undefined, { a: 3 }).a, 3, '$.grepDiff( undefined, { ... }).key');
+	equals( jQuery.grepDiff( {}, { a: 3 }).a, 3, '$.grepDiff( {}, { ... }).key');
+	equals( jQuery.grepDiff( { a: 3 }, { a: 3 }).a, undefined, '$.grepDiff( { ... }, { ... }).unchangedKey');
+	equals( jQuery.grepDiff( { a: 3 }, { a: 5 }).a, 5, '$.grepDiff( { ... }, { ... }).changedKey');
+});
+

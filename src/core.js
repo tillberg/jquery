@@ -586,6 +586,15 @@ jQuery.extend({
 
 		return ret;
 	},
+	
+	// Filter b, returning k/v pairs that are different from those in a
+	grepDiff: function( a, b ) {
+		var c = {};
+		jQuery.each(b, function( k, v ) {
+			if ( !a || a[ k ] !== v ) { c[ k ] = v; }
+		});
+		return c;
+	},
 
 	map: function( elems, callback ) {
 		var ret = [], value;
@@ -689,7 +698,7 @@ jQuery.extend({
 
 // Attach inline versions of simple object/array methods to jQuery.fn
 // This is more compact than defining them inline above
-jQuery.map( 'front,frontKey,back,backKey,splice,size'.split( ',' ), function( x ) {
+jQuery.map( 'front,frontKey,back,backKey,splice,size,grepDiff'.split( ',' ), function( x ) {
 	jQuery.fn[ x ] = function( a ) { 
 		return jQuery[ x ]( this.o || this, a );
 	};
