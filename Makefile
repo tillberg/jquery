@@ -25,8 +25,9 @@ MODULES = ${SRC_DIR}/json2.js\
 	${BASE_FILES}\
 	${SRC_DIR}/outro.js
 
-JQ = ${DIST_DIR}/jquery.js
-JQ_MIN = ${DIST_DIR}/jquery.min.js
+JQ = ${DIST_DIR}/jqueryex.js
+JQ_MIN = ${DIST_DIR}/jqueryex.min.js
+JQ_GZ = ${DIST_DIR}/jqueryex.min.js.gz
 
 JQ_VER = `cat version.txt`
 VER = sed s/@VERSION/${JQ_VER}/
@@ -74,9 +75,13 @@ ${JQ_MIN}: ${JQ}
 
 	@@echo " - Compressing using Minifier"
 	@@${MINJAR} ${JQ} > ${JQ_MIN}
-
+	@@gzip -c ${JQ_MIN} > ${JQ_GZ}
 	@@echo ${JQ_MIN} "Built"
 	@@echo
+
+deploy: all
+	cp ${JQ_MIN} ../../rails/orbza/public/i/
+	cp ${JQ_GZ} ../../rails/orbza/public/i/
 
 clean:
 	@@echo "Removing Distribution directory:" ${DIST_DIR}
