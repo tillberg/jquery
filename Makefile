@@ -80,6 +80,7 @@ ${JQ_MIN}: ${JQ}
 	@@echo
 
 deploy: all
+	cp ${JQ} ../../rails/orbza/public/i/
 	cp ${JQ_MIN} ../../rails/orbza/public/i/
 	cp ${JQ_GZ} ../../rails/orbza/public/i/
 

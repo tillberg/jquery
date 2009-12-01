@@ -77,25 +77,41 @@ jQuery.fn.extend({
 		return this.eq( jQuery.randInt( this.length ) );
 	},
 	
+	// Chainable version of $().push
+	// jQuery.fn.push === [].push, which is not chainable.  In fact, its return
+	// value is kind of lame.  We should rewrite jQuery to use something else in
+	// place of that, perhaps, if possible.
+	pushForReal: function( x ) {
+		[].push.call( this, x );
+		return this;
+	},
+
 	pop: [].pop
 });
 
 // Find the nth value in a.  If y, then return the nth key instead.
 // If n is negative, return the last key/value for objects, or the
 // mod-indexed key/value for arrays.
-function nth( a, n, y ) {
+// Callbacks not supported for now in reverse searches.  Will give 
+// incorrect results.
+function nth( a, n, cb, y ) {
 	var l = a.length, v;
-	if ( l !== undefined ) { 
+	if ( l !== undefined && !cb ) { 
 		if ( n < 0 ) { n = (n + l) % l; }
 		// Some parentheses would be nice here... but they cost bytes
 		return y ? l > 0 ? n : undefined : a[ n ];
 	}
 	
-	for ( var k in a ) {
-		v = y ? k : a[ k ];
-		if (n === 0) { return v; }
-		n--;
-	}
+	$.each(a, function( k, x ) {
+		if ( !cb( x, k ) ) {
+			 // "continue" - don't count this iteration as it fails the callback
+			return;
+		}
+		if ( n-- === 0 ) {
+			v = y ? k : x;
+			return false;
+		} // Stop iteration
+	});
 	return v;
 }
 
@@ -125,20 +141,22 @@ jQuery.extend({
 		return r;
 	},
 	
-	front: function( a ) {
-		return nth( a, 0 );
+	front: function( a, cb ) {
+		return nth( a, 0, cb );
 	},
 	
-	frontKey: function( a ) {
-		return nth( a, 0, 1 );
+	frontKey: function( a, cb ) {
+		return nth( a, 0, cb, 1 );
 	},
 	
+	// Callbacks not supported for now
 	back: function( a ) {
-		return nth( a, -1 );
+		return nth( a, -1, undefined );
 	},
 	
+	// Callbacks not supported for now
 	backKey: function( a ) {
-		return nth( a, -1, 1 );
+		return nth( a, -1, undefined, 1 );
 	},
 	
 	// Return an array of integers from 0 to m - 1, or m to n - 1 if n is specified.
