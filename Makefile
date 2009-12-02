@@ -44,11 +44,10 @@ ${DIST_DIR}:
 
 init:
 	@@echo "Grabbing external dependencies..."
-	@@git submodule init
-	@@git submodule update
-#	@@cd src/sizzle && git pull origin master
-#	@@cd test/qunit && git pull origin master
-#	@@git submodule update
+	@@if test ! -d test/qunit; then git clone git://github.com/jquery/qunit.git test/qunit; fi
+	@@if test ! -d src/sizzle; then git clone git://github.com/jeresig/sizzle.git src/sizzle; fi
+#	@@cd src/sizzle && git pull origin master &> /dev/null
+#	@@cd test/qunit && git pull origin master &> /dev/null
 
 jquery: ${DIST_DIR} selector ${JQ}
 
@@ -61,9 +60,6 @@ ${JQ}: ${MODULES}
 		sed 's/Date:./&'"${DATE}"'/' | \
 		${VER} > ${JQ};
 
-	@@echo ${JQ} "Built"
-	@@echo
-
 selector: init
 	@@echo "Building selector code from Sizzle"
 	@@sed '/EXPOSE/r src/sizzle-jquery.js' src/sizzle/sizzle.js > src/selector.js
@@ -73,7 +69,6 @@ min: ${JQ_MIN}
 ${JQ_MIN}: ${JQ}
 	@@echo "Building" ${JQ_MIN}
 
-	@@echo " - Compressing using Minifier"
 	@@${MINJAR} ${JQ} > ${JQ_MIN}
 	@@gzip -c ${JQ_MIN} > ${JQ_GZ}
 	@@echo ${JQ_MIN} "Built"
@@ -90,3 +85,6 @@ clean:
 
 	@@echo "Removing built copy of Sizzle"
 	@@rm src/selector.js
+
+	@@echo "Removing cloned directories"
+	@@rm -rf test/qunit src/sizzle
