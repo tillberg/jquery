@@ -102,8 +102,12 @@ function nth( a, n, cb, y ) {
 		return y ? l > 0 ? n : undefined : a[ n ];
 	}
 	
-	$.each(a, function( k, x ) {
-		if ( !cb( x, k ) ) {
+	// Crude hack to make $({...}).last*() work
+	// It still won't work with a callback, of course
+	if ( n < 0 ) { n += jQuery( a ).size() } 
+	
+	jQuery.each(a, function( k, x ) {
+		if ( cb && !cb( x, k ) ) {
 			 // "continue" - don't count this iteration as it fails the callback
 			return;
 		}
