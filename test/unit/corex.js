@@ -303,3 +303,14 @@ test( 'random', function() {
 	equals( jQuery( [ 7, 6, 5, 4 ] ).random().size(), 1, '$( [ ... ] ).random().size()');
 
 });
+
+test( 'reduce', function() {
+	expect( 2 );
+	
+	function rSum( sum, num ) { return sum + num; }
+	
+    equals( jQuery.reduce( [1, 2, 3], '', rSum ), '123', '$.reduce( [ ... ] )');
+    equals( jQuery( [1, 2, 3] ).reduce( 0, rSum ), 6, '$( [ ... ] ).reduce()');
+	
+});
+

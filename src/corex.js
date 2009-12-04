@@ -18,14 +18,6 @@ jQuery.fn.extend({
 		return this.o && (this.o[k] !== undefined);
 	},
 	
-	grep: function( a, b ) {
-		return jQuery( jQuery.grep( this.o || this, a, b, this.o ) );
-	},
-	
-	mapToObj: function( cb ) {
-		return jQuery( jQuery.mapToObj( this.o || this, cb ) );
-	},
-	
 	peek: function() {
 		return this[ this.length - 1 ];
 	},
@@ -80,7 +72,8 @@ jQuery.fn.extend({
 	// Chainable version of $().push
 	// jQuery.fn.push === [].push, which is not chainable.  In fact, its return
 	// value is kind of lame.  We should rewrite jQuery to use something else in
-	// place of that, perhaps, if possible.
+	// place of that, perhaps, if possible.  We can't just change push because
+	// doing so breaks all sorts of core functionality.  Not sure how exactly.
 	pushForReal: function( x ) {
 		[].push.call( this, x );
 		return this;
@@ -131,8 +124,7 @@ jQuery.extend({
 	},
 
 	mapToObj: function( o, cb ) {
-		var r = {};
-		jQuery.each( o, function( k, v ) {
+		return jQuery.reduce( o, {}, function( r, v, k ) {
 			var x = cb( v, k );
 			if ( jQuery.isArray( x ) ) {
 				// Return value was of form [ k, v ]
@@ -141,8 +133,8 @@ jQuery.extend({
 				// Return value was of form { k1: v1, ... }
 				jQuery.extend( r, x );
 			}
+			return r;
 		});
-		return r;
 	},
 	
 	front: function( a, cb ) {
@@ -198,8 +190,8 @@ jQuery.extend({
 	reduce: function( o, res, cb, isObj ) {
 		isObj = isObj || o.length === undefined;
 		// If this is just an array and JS 1.8 reduce is available, use it (untested)
-		if (!isObj && o.reduce) return o.reduce( cb, res );
-		jQuery.each( o, function( v, k ) {
+		//if (!isObj && o.reduce) return o.reduce( cb, res );
+		jQuery.each( o, function( k, v ) {
 			res = cb( res, v, k );
 		});
 		return res;
@@ -224,8 +216,20 @@ jQuery.extend({
 // Attach inline versions of simple object/array methods to jQuery.fn
 // This is more compact than defining them inline above
 // size will actually overwrite the default jQuery version
-jQuery.map( 'front,frontKey,back,backKey,filterByKey,size,grepDiff'.split( ',' ), function( x ) {
+jQuery.map( 'front,frontKey,back,backKey,filterByKey,size,grepDiff,reduce'.split( ',' ), function( x ) {
+	jQuery.fn[ x ] = function( a, b ) { 
+		return jQuery[ x ]( this.o || this, a, b, this.o );
+	};
+});
+
+jQuery.map( 'mapToObj'.split(','), function( x ) {
 	jQuery.fn[ x ] = function( a ) { 
-		return jQuery[ x ]( this.o || this, a );
+		return jQuery( jQuery[ x ]( this.o || this, a, this.o ) );
+	};
+});
+
+jQuery.map( 'grep'.split(','), function( x ) {
+	jQuery.fn[ x ] = function( a, b ) { 
+		return jQuery( jQuery[ x ]( this.o || this, a, b, this.o ) );
 	};
 });
