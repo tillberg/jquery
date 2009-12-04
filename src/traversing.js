@@ -1,16 +1,27 @@
+var runtil = /Until$/,
+	rparentsprev = /^(?:parents|prevUntil|prevAll)/,
+	// Note: This RegExp should be improved, or likely pulled from Sizzle
+	rmultiselector = /,/,
+	slice = Array.prototype.slice;
+
+// Implement the identical functionality for filter and not
 var winnow = function( elements, qualifier, keep ) {
-	if(jQuery.isFunction( qualifier )) {
+	if ( jQuery.isFunction( qualifier ) ) {
 		return jQuery.grep(elements, function(elem, i) {
 			return !!qualifier.call( elem, i ) === keep;
 		});
-	} else if( qualifier.nodeType ) {
+
+	} else if ( qualifier.nodeType ) {
 		return jQuery.grep(elements, function(elem, i) {
 			return (elem === qualifier) === keep;
 		});
-	} else if( typeof qualifier === "string" ) {
-		var filtered = jQuery.grep(elements, function(elem) { return elem.nodeType === 1; });
 
-		if(isSimple.test( qualifier )) {
+	} else if ( typeof qualifier === "string" ) {
+		var filtered = jQuery.grep(elements, function(elem) {
+			return elem.nodeType === 1;
+		});
+
+		if ( isSimple.test( qualifier ) ) {
 			return jQuery.filter(qualifier, filtered, !keep);
 		} else {
 			qualifier = jQuery.filter( qualifier, elements );
@@ -54,21 +65,47 @@ jQuery.fn.extend({
 		return this.pushStack( winnow(this, selector, true), "filter", selector );
 	},
 
-	closest: function( selector, context ) {
-		var pos = jQuery.expr.match.POS.test( selector ) ? 
-			jQuery( selector, context || this.context ) : null;
+	closest: function( selectors, context ) {
+		if ( jQuery.isArray( selectors ) ) {
+			var ret = [], cur = this[0], match, matches = {}, selector;
 
-		return this.map(function(){
-			var cur = this, closer = 0;
+			if ( cur && selectors.length ) {
+				for ( var i = 0, l = selectors.length; i < l; i++ ) {
+					selector = selectors[i];
+
+					if ( !matches[selector] ) {
+						matches[selector] = jQuery.expr.match.POS.test( selector ) ? 
+							jQuery( selector, context || this.context ) :
+							selector;
+					}
+				}
+
+				while ( cur && cur.ownerDocument && cur !== context ) {
+					for ( selector in matches ) {
+						match = matches[selector];
+
+						if ( match.jquery ? match.index(cur) > -1 : jQuery(cur).is(match) ) {
+							ret.push({ selector: selector, elem: cur });
+							delete matches[selector];
+						}
+					}
+					cur = cur.parentNode;
+				}
+			}
+
+			return ret;
+		}
+
+		var pos = jQuery.expr.match.POS.test( selectors ) ? 
+			jQuery( selectors, context || this.context ) : null;
+
+		return this.map(function(i, cur){
 			while ( cur && cur.ownerDocument && cur !== context ) {
-				if ( pos ? pos.index(cur) > -1 : jQuery(cur).is(selector) ) {
-					jQuery.lastCloser = closer;
+				if ( pos ? pos.index(cur) > -1 : jQuery(cur).is(selectors) ) {
 					return cur;
 				}
 				cur = cur.parentNode;
-				closer++;
 			}
-			jQuery.lastCloser = -1;
 			return null;
 		});
 	},
@@ -99,12 +136,12 @@ jQuery.fn.extend({
 	},
 
 	slice: function() {
-		return this.pushStack( Array.prototype.slice.apply( this, arguments ),
-			"slice", Array.prototype.slice.call(arguments).join(",") );
+		return this.pushStack( slice.apply( this, arguments ),
+			"slice", slice.call(arguments).join(",") );
 	},
 
 	map: function( callback ) {
-		if (this.o) { return jQuery( jQuery.map( this.o, callback, 1 ) ); }
+		if (this.o) { return jQuery( jQuery.map( this.o, callback, undefined, 1 ) ); }
 		return this.pushStack( jQuery.map(this, function(elem, i){
 			return callback.call( elem, i, elem );
 		}));
@@ -122,16 +159,23 @@ jQuery.fn.extend({
 jQuery.each({
 	parent: function(elem){return elem.parentNode;},
 	parents: function(elem){return jQuery.dir(elem,"parentNode");},
+	parentsUntil: function(elem,i,until){return jQuery.dir(elem,"parentNode",until);},
 	next: function(elem){return jQuery.nth(elem,2,"nextSibling");},
 	prev: function(elem){return jQuery.nth(elem,2,"previousSibling");},
 	nextAll: function(elem){return jQuery.dir(elem,"nextSibling");},
 	prevAll: function(elem){return jQuery.dir(elem,"previousSibling");},
+	nextUntil: function(elem,i,until){return jQuery.dir(elem,"nextSibling",until);},
+	prevUntil: function(elem,i,until){return jQuery.dir(elem,"previousSibling",until);},
 	siblings: function(elem){return jQuery.sibling(elem.parentNode.firstChild,elem);},
 	children: function(elem){return jQuery.sibling(elem.firstChild);},
 	contents: function(elem){return jQuery.nodeName(elem,"iframe")?elem.contentDocument||elem.contentWindow.document:jQuery.makeArray(elem.childNodes);}
 }, function(name, fn){
-	jQuery.fn[ name ] = function( selector ) {
-		var ret = jQuery.map( this, fn );
+	jQuery.fn[ name ] = function( until, selector ) {
+		var ret = jQuery.map( this, fn, until );
+		
+		if ( !runtil.test( name ) ) {
+			selector = until;
+		}
 
 		if ( selector && typeof selector === "string" ) {
 			ret = jQuery.filter( selector, ret );
@@ -139,11 +183,11 @@ jQuery.each({
 
 		ret = this.length > 1 ? jQuery.unique( ret ) : ret;
 
-		if ( name === "parents" && this.length > 1 ) {
+		if ( (this.length > 1 || rmultiselector.test( selector )) && rparentsprev.test( name ) ) {
 			ret = ret.reverse();
 		}
 
-		return this.pushStack( ret, name, selector );
+		return this.pushStack( ret, name, slice.call(arguments).join(",") );
 	};
 });
 
@@ -156,9 +200,9 @@ jQuery.extend({
 		return jQuery.find.matches(expr, elems);
 	},
 	
-	dir: function( elem, dir ) {
+	dir: function( elem, dir, until ) {
 		var matched = [], cur = elem[dir];
-		while ( cur && cur.nodeType !== 9 ) {
+		while ( cur && cur.nodeType !== 9 && (until === undefined || !jQuery( cur ).is( until )) ) {
 			if ( cur.nodeType === 1 ) {
 				matched.push( cur );
 			}

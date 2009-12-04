@@ -502,23 +502,23 @@ jQuery.extend({
 		return ret;
 	},
 
-	map: function( elems, callback, isObj ) {
+	map: function( elems, callback, arg, isObj ) {
 		isObj = isObj || elems.length === undefined;
 		var ret = isObj ? {} : [], value;
 		if ( isObj ) { 
 			for (var k in elems) {
-				value = callback( elems[ k ], k);
+				value = callback( elems[ k ], k, arg);
 				if (value != null) {
 					ret[ k ] = value;
 				}
 			}
 			return ret;
 		}
-		
+
 		// Go through the array, translating each of the items to their
 		// new value (or values).
 		for ( var i = 0, length = elems.length; i < length; i++ ) {
-			value = callback( elems[ i ], i );
+			value = callback( elems[ i ], i, arg );
 
 			if ( value != null ) {
 				ret[ ret.length ] = value;
