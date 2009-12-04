@@ -75,9 +75,8 @@ ${JQ_MIN}: ${JQ}
 	@@echo
 
 deploy: all
-	cp ${JQ} ../../rails/orbza/public/i/
-	cp ${JQ_MIN} ../../rails/orbza/public/i/
-	cp ${JQ_GZ} ../../rails/orbza/public/i/
+	cp ${JQ} ../../orbza/public/i/
+	cp ${JQ_MIN} ../../orbza/public/i/
 
 clean:
 	@@echo "Removing Distribution directory:" ${DIST_DIR}
