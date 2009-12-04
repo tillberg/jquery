@@ -242,10 +242,10 @@ test( 'mapToObj', function() {
 	var str = 'a=4,b=7,c=9';
 	var obj = jQuery.mapToObj( str.split( ',' ), function( v ) { var a = v.split( '=' ); var d = {}; d[ a[ 0 ] ] = a[ 1 ]; return d; } );
 	equals( obj.b, 7, '$.mapToObj with object callback return' );
-	var obj2 = jQuery.mapToObj( str.split( ',' ), function( v ) { var a = v.split( '=' ); return [ a[ 0 ], a[ 1 ] ]; } );
+	var obj2 = jQuery.mapToObj( str.split( ',' ), function( v ) { return v.split( '=' ); } );
 	equals( obj2.c, 9, '$.mapToObj with array callback return' );
 
-	var obj3 = jQuery( str.split( ',' ) ).mapToObj( function( v ) { var a = v.split( '=' ); return [ a[ 0 ], a[ 1 ] ]; } );
+	var obj3 = jQuery( str.split( ',' ) ).mapToObj( function( v ) { return v.split( '=' ); } );
 	equals( obj3.o.a, 4, '$.mapToObj inline' );
 
 });
