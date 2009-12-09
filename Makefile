@@ -18,7 +18,8 @@ BASE_FILES = ${SRC_DIR}/core.js\
 	${SRC_DIR}/ajax.js\
 	${SRC_DIR}/fx.js\
 	${SRC_DIR}/offset.js\
-	${SRC_DIR}/dimensions.js
+	${SRC_DIR}/dimensions.js\
+	${SRC_DIR}/unplugin.js
 
 MODULES = ${SRC_DIR}/json2.js\
 	${SRC_DIR}/intro.js\
