@@ -99,7 +99,7 @@ jQuery.fn.extend({
 		var pos = jQuery.expr.match.POS.test( selectors ) ? 
 			jQuery( selectors, context || this.context ) : null;
 
-		return this.map(function(i, cur){
+		return this.map(function(cur, i){
 			while ( cur && cur.ownerDocument && cur !== context ) {
 				if ( pos ? pos.index(cur) > -1 : jQuery(cur).is(selectors) ) {
 					return cur;
@@ -143,8 +143,8 @@ jQuery.fn.extend({
 	map: function( callback ) {
 		if (this.o) { return jQuery( jQuery.map( this.o, callback, undefined, 1 ) ); }
 		return this.pushStack( jQuery.map(this, function(elem, i){
-			return callback.call( elem, i, elem );
-		}));
+			return callback.call( elem, elem, i );
+		})); 
 	},
 
 	andSelf: function() {
