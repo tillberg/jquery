@@ -4,7 +4,7 @@ test( 'Object Constructor', function() {
 	expect( 4 );
 	
 	ok( jQuery( {} ), '$({})' );
-	ok( jQuery.isObjectLiteral( jQuery({}).o ), '$({}).o is object literal' );
+	ok( jQuery.isPlainObject( jQuery({}).o ), '$({}).o is object literal' );
 	
 	var name = 'Bob Smith';
 	var obj = jQuery( { name: name, age: 42 } );
