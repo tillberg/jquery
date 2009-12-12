@@ -1,7 +1,7 @@
 module("css");
 
 test("css(String|Hash)", function() {
-	expect(27);
+	expect(28);
 
 	equals( jQuery('#main').css("display"), 'none', 'Check for css property "display"');
 
@@ -56,15 +56,20 @@ test("css(String|Hash)", function() {
 	}
 
 	equals( prctval, checkval, "Verify fontSize % set." );
+
+	equals( typeof child.css("width"), "string", "Make sure that a string width is returned from css('width')." );
 });
 
 test("css(String, Object)", function() {
-	expect(20);
+	expect(21);
 	ok( jQuery('#nothiddendiv').is(':visible'), 'Modifying CSS display: Assert element is visible');
 	jQuery('#nothiddendiv').css("display", 'none');
 	ok( !jQuery('#nothiddendiv').is(':visible'), 'Modified CSS display: Assert element is hidden');
 	jQuery('#nothiddendiv').css("display", 'block');
 	ok( jQuery('#nothiddendiv').is(':visible'), 'Modified CSS display: Assert element is visible');
+
+	jQuery("#nothiddendiv").css("top", "-1em");
+	ok( jQuery("#nothiddendiv").css("top"), -16, "Check negative number in EMs." );
 
 	jQuery('#floatTest').css('styleFloat', 'left');
 	equals( jQuery('#floatTest').css('styleFloat'), 'left', 'Modified CSS float using "styleFloat": Assert float is left');

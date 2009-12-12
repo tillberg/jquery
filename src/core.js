@@ -1,9 +1,7 @@
 // Define a local copy of jQuery
 var jQuery = function( selector, context ) {
 		// The jQuery object is actually just the init constructor 'enhanced'
-		return arguments.length === 0 ?
-			rootjQuery :
-			new jQuery.fn.init( selector, context );
+		return new jQuery.fn.init( selector, context );
 	},
 
 	// Map over jQuery in case of overwrite
@@ -29,7 +27,7 @@ var jQuery = function( selector, context ) {
 	rnotwhite = /\S/,
 
 	// Used for trimming whitespace
-	rtrim = /(\s|\u00A0)+|(\s|\u00A0)+$/g,
+	rtrim = /^(\s|\u00A0)+|(\s|\u00A0)+$/g,
 
 	// Match a standalone tag
 	rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>)?$/,
@@ -37,6 +35,12 @@ var jQuery = function( selector, context ) {
 	// Keep a UserAgent string for use with jQuery.browser
 	userAgent = navigator.userAgent.toLowerCase(),
 	
+	// Has the ready events already been bound?
+	readyBound = false,
+	
+	// The functions to execute on DOM ready
+	readyList = [],
+
 	// Save a reference to some core methods
 	toString = Object.prototype.toString,
 	hasOwnProperty = Object.prototype.hasOwnProperty,
@@ -46,7 +50,7 @@ var jQuery = function( selector, context ) {
 
 jQuery.fn = jQuery.prototype = {
 	init: function( selector, context ) {
-		var match, elem, ret, doc;
+		var match, elem, ret, doc, parent;
 
 		// Handle $(""), $(null), or $(undefined)
 		if ( !selector ) {
@@ -81,7 +85,12 @@ jQuery.fn = jQuery.prototype = {
 
 					} else {
 						ret = buildFragment( [ match[1] ], [ doc ] );
-						selector = (ret.cacheable ? ret.fragment.cloneNode(true) : ret.fragment).childNodes;
+						parent = ret.cacheable ? ret.fragment.cloneNode(true) : ret.fragment;
+						selector = [];
+
+						while ( parent.firstChild ) {
+							selector.push( parent.removeChild( parent.firstChild ) );
+						}
 					}
 
 				// HANDLE: $("#id")
@@ -219,24 +228,53 @@ jQuery.fn = jQuery.prototype = {
 	each: function( callback, args ) {
 		return jQuery.each( this.o || this, callback, args );
 	},
+	
+	ready: function( fn ) {
+		// Attach the listeners
+		jQuery.bindReady();
 
-	// Determine the position of an element within
-	// the matched set of elements
-	index: function( elem ) {
-		if ( !elem || typeof elem === "string" ) {
-			return jQuery.inArray( this[0],
-				// If it receives a string, the selector is used
-				// If it receives nothing, the siblings are used
-				elem ? jQuery( elem ) : this.parent().children() );
+		// If the DOM is already ready
+		if ( jQuery.isReady && !readyList ) {
+			// Execute the function immediately
+			fn.call( document, jQuery );
+
+		// Otherwise, remember the function for later
+		} else {
+			// Add the function to the wait list
+			readyList.push( fn );
 		}
-		// Locate the position of the desired element
-		return jQuery.inArray(
-			// If it receives a jQuery object, the first element is used
-			elem.jquery ? elem[0] : elem, this );
+
+		return this;
+	},
+	
+	eq: function( i ) {
+		return i === -1 ?
+			this.slice( i ) :
+			this.slice( i, +i + 1 );
 	},
 
-	is: function( selector ) {
-		return !!selector && jQuery.filter( selector, this ).length > 0;
+	first: function() {
+		return this.eq( 0 );
+	},
+
+	last: function() {
+		return this.eq( -1 );
+	},
+
+	slice: function() {
+		return this.pushStack( slice.apply( this, arguments ),
+			"slice", slice.call(arguments).join(",") );
+	},
+
+	map: function( callback ) {
+		if (this.o) { return jQuery( jQuery.map( this.o, callback, undefined, 1 ) ); }
+		return this.pushStack( jQuery.map(this, function(elem, i){
+			return callback.call( elem, elem, i );
+		})); 
+	},
+	
+	end: function() {
+		return this.prevObject || jQuery(null);
 	},
 
 	// For internal use only.
@@ -286,9 +324,9 @@ jQuery.extend = jQuery.fn.extend = function() {
 				}
 
 				// Recurse if we're merging object literal values
-				if ( deep && copy && jQuery.isObjectLiteral(copy) ) {
+				if ( deep && copy && jQuery.isPlainObject(copy) ) {
 					// Don't extend not object literals
-					var clone = src && jQuery.isObjectLiteral(src) ? src : {};
+					var clone = src && jQuery.isPlainObject(src) ? src : {};
 
 					// Never move original objects, clone them
 					target[ name ] = jQuery.extend( deep, clone, copy );
@@ -315,6 +353,107 @@ jQuery.extend({
 
 		return jQuery;
 	},
+	
+	// Is the DOM ready to be used? Set to true once it occurs.
+	isReady: false,
+	
+	// Handle when the DOM is ready
+	ready: function() {
+		// Make sure that the DOM is not already loaded
+		if ( !jQuery.isReady ) {
+			if ( !document.body ) {
+				return setTimeout( jQuery.ready, 13 );
+			}
+
+			// Remember that the DOM is ready
+			jQuery.isReady = true;
+
+			// If there are functions bound, to execute
+			if ( readyList ) {
+				// Execute all of them
+				var fn, i = 0;
+				while ( (fn = readyList[ i++ ]) ) {
+					fn.call( document, jQuery );
+				}
+
+				// Reset the list of functions
+				readyList = null;
+			}
+
+			// Trigger any bound ready events
+			if ( jQuery.fn.triggerHandler ) {
+				jQuery( document ).triggerHandler( "ready" );
+			}
+		}
+	},
+	
+	bindReady: function() {
+		if ( readyBound ) { return; }
+		readyBound = true;
+
+		// Catch cases where $(document).ready() is called after the
+		// browser event has already occurred.
+		if ( document.readyState === "complete" ) {
+			return jQuery.ready();
+		}
+
+		// Mozilla, Opera and webkit nightlies currently support this event
+		if ( document.addEventListener ) {
+			// Use the handy event callback
+			document.addEventListener( "DOMContentLoaded", function DOMContentLoaded() {
+				document.removeEventListener( "DOMContentLoaded", DOMContentLoaded, false );
+				jQuery.ready();
+			}, false );
+			
+			// A fallback to window.onload, that will always work
+			window.addEventListener( "load", jQuery.ready, false );
+
+		// If IE event model is used
+		} else if ( document.attachEvent ) {
+			// ensure firing before onload,
+			// maybe late but safe also for iframes
+			document.attachEvent("onreadystatechange", function onreadystatechange() {
+				// Make sure body exists, at least, in case IE gets a little overzealous (ticket #5443).
+				if ( document.readyState === "complete" ) {
+					document.detachEvent( "onreadystatechange", onreadystatechange );
+					jQuery.ready();
+				}
+			});
+			
+			// A fallback to window.onload, that will always work
+			window.attachEvent( "onload", jQuery.ready );
+
+			// If IE and not a frame
+			// continually check to see if the document is ready
+			var toplevel = false;
+
+			try {
+				toplevel = window.frameElement == null;
+			} catch(e){}
+
+			if ( document.documentElement.doScroll && toplevel ) {
+				doScrollCheck();
+
+				function doScrollCheck() {
+					if ( jQuery.isReady ) {
+						return;
+					}
+
+					try {
+						// If IE is used, use the trick by Diego Perini
+						// http://javascript.nwbox.com/IEContentLoaded/
+						document.documentElement.doScroll("left");
+					} catch( error ) {
+						setTimeout( doScrollCheck, 1 );
+						return;
+					}
+
+					// and execute any waiting functions
+					jQuery.ready();
+				}
+			}
+		}
+	},
 
 	// See test/unit/core.js for details concerning isFunction.
 	// Since version 1.3, DOM methods and functions like alert
@@ -327,15 +466,15 @@ jQuery.extend({
 		return toString.call(obj) === "[object Array]";
 	},
 
-	isObjectLiteral: function( obj ) {
+	isPlainObject: function( obj ) {
 		if ( toString.call(obj) !== "[object Object]" || typeof obj.nodeType === "number" ) {
 			return false;
 		}
 		
 		// not own constructor property must be Object
 		if ( obj.constructor
-		  && !hasOwnProperty.call(obj, "constructor")
-		  && !hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf") ) {
+			&& !hasOwnProperty.call(obj, "constructor")
+			&& !hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf") ) {
 			return false;
 		}
 		
@@ -355,14 +494,6 @@ jQuery.extend({
 		return true;
 	},
 
-	// check if an element is in a (or is an) XML document
-	isXMLDoc: function( elem ) {
-		// documentElement is verified for cases where it doesn't yet exist
-		// (such as loading iframes in IE - #4833)
-		var documentElement = (elem ? elem.ownerDocument || elem : 0).documentElement;
-		return documentElement ? documentElement.nodeName !== "HTML" : false;
-	},
-
 	// Evalulates a script in a global context
 	globalEval: function( data ) {
 		if ( data && rnotwhite.test(data) ) {
@@ -379,7 +510,7 @@ jQuery.extend({
 				script.text = data;
 			}
 
-			// Use insertBefore instead of appendChild  to circumvent an IE6 bug.
+			// Use insertBefore instead of appendChild to circumvent an IE6 bug.
 			// This arises when a base node is used (#2709).
 			head.insertBefore( script, head.firstChild );
 			head.removeChild( script );
@@ -438,7 +569,9 @@ jQuery.extend({
 
 		if ( array != null ) {
 			// The window, strings (and functions) also have 'length'
-			if ( array.length == null || typeof array === "string" || jQuery.isFunction(array) || array.setInterval ) {
+			// The extra typeof function check is to prevent crashes
+			// in Safari 2 (See: #3039)
+			if ( array.length == null || typeof array === "string" || jQuery.isFunction(array) || (typeof array !== "function" && array.setInterval) ) {
 				push.call( ret, array );
 			} else {
 				jQuery.merge( ret, array );
@@ -463,22 +596,19 @@ jQuery.extend({
 	},
 
 	merge: function( first, second ) {
-		var pos, i = second.length;
+		var i = first.length, j = 0;
 
-		// We have to get length this way when IE & Opera overwrite the length
-		// expando of getElementsByTagName
-		if ( i && i.nodeType ) {
-			for ( i = 0; second[i]; ++i ) {}
+		if ( typeof second.length === "number" ) {
+			for ( var l = second.length; j < l; j++ ) {
+				first[ i++ ] = second[ j ];
+			}
+		} else {
+			while ( second[j] !== undefined ) {
+				first[ i++ ] = second[ j++ ];
+			}
 		}
-		
-		pos = i + first.length;
-		
-		// Correct length for non Arrays
-		first.length = pos;
-		
-		while ( i ) {
-			first[ --pos ] = second[ --i ];
-		}
+
+		first.length = i;
 
 		return first;
 	},
@@ -528,17 +658,19 @@ jQuery.extend({
 		return ret.concat.apply( [], ret );
 	},
 
-	// Use of jQuery.browser is deprecated.
-	// It's included for backwards compatibility and plugins,
-	// although they should work to migrate away.
+	// Use of jQuery.browser is frowned upon.
+	// More details: http://docs.jquery.com/Utilities/jQuery.browser
 	browser: {
-		version: (/.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/.exec(userAgent) || [0,'0'])[1],
-		safari: /webkit/.test( userAgent ),
+		version: (/.*?(?:firefox|safari|opera|msie)[\/ ]([\d.]+)/.exec(userAgent) || [0,'0'])[1],
+		safari: /safari/.test( userAgent ),
 		opera: /opera/.test( userAgent ),
 		msie: /msie/.test( userAgent ) && !/opera/.test( userAgent ),
-		mozilla: /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test( userAgent )
+		firefox: /firefox/.test( userAgent )
 	}
 });
+
+// Deprecated
+jQuery.browser.mozilla = /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test( userAgent );
 
 if ( indexOf ) {
 	jQuery.inArray = function( elem, array ) {
@@ -568,31 +700,30 @@ function evalScript( i, elem ) {
 // Mutifunctional method to get and set values to a collection
 // The value/s can be optionally by executed if its a function
 function access( elems, key, value, exec, fn ) {
-	var l = elems.length;
+	var length = elems.length;
 	
 	// Setting many attributes
 	if ( typeof key === "object" ) {
-			for (var k in key) {
-				access(elems, k, key[k], exec, fn);
-			}
-		return elems;
-	}
-	
-	// Setting one attribute
-	if (value !== undefined) {
-		// Optionally, function values get executed if exec is true
-		exec = exec && jQuery.isFunction(value);
-		
-		for (var i = 0; i < l; i++) {
-			var elem = elems[i],
-				val = exec ? value.call(elem, i) : value;
-			fn(elem, key, val);
+		for ( var k in key ) {
+			access( elems, k, key[k], exec, fn );
 		}
 		return elems;
 	}
 	
+	// Setting one attribute
+	if ( value !== undefined ) {
+		// Optionally, function values get executed if exec is true
+		exec = exec && jQuery.isFunction(value);
+		
+		for ( var i = 0; i < length; i++ ) {
+			fn( elems[i], key, exec ? value.call( elems[i], i ) : value );
+		}
+		
+		return elems;
+	}
+	
 	// Getting an attribute
-	return l ? fn(elems[0], key) : null;
+	return length ? fn( elems[0], key ) : null;
 }
 
 function now() {

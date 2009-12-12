@@ -37,11 +37,11 @@ jQuery.event = {
 
 		// Init the element's event structure
 		var events = jQuery.data( elem, "events" ) || jQuery.data( elem, "events", {} ),
-			handle = jQuery.data( elem, "handle" ) || jQuery.data( elem, "handle", function() {
+			handle = jQuery.data( elem, "handle" ) || jQuery.data( elem, "handle", function eventHandle() {
 				// Handle the second event of a trigger and when
 				// an event is called after a page has unloaded
 				return typeof jQuery !== "undefined" && !jQuery.event.triggered ?
-					jQuery.event.handle.apply( arguments.callee.elem, arguments ) :
+					jQuery.event.handle.apply( eventHandle.elem, arguments ) :
 					undefined;
 			});
 		// Add elem as a property of the handle function
@@ -126,7 +126,7 @@ jQuery.event = {
 					types = types.type;
 				}
 
-				// Handle multiple events seperated by a space
+				// Handle multiple events separated by a space
 				// jQuery(...).unbind("mouseover mouseout", fn);
 				types = types.split(/\s+/);
 				var i = 0;
@@ -135,7 +135,7 @@ jQuery.event = {
 					var namespaces = type.split(".");
 					type = namespaces.shift();
 					var all = !namespaces.length,
-						cleaned = jQuery.map( namespaces.slice(0).sort() , function(nm){ return nm.replace(/[^\w\s\.\|`]/g, function(ch){return "\\"+ch  }) }),
+						cleaned = jQuery.map( namespaces.slice(0).sort() , function(nm){ return nm.replace(/[^\w\s\.\|`]/g, function(ch){return "\\"+ch;  }); }),
 						namespace = new RegExp("(^|\\.)" + cleaned.join("\\.(?:.*\\.)?") + "(\\.|$)"),
 						special = this.special[ type ] || {};
 
@@ -253,22 +253,26 @@ jQuery.event = {
 
 		var nativeFn, nativeHandler;
 		try {
-			nativeFn = elem[ type ];
-			nativeHandler = elem[ "on" + type ];
+			if ( !(elem && elem.nodeName && jQuery.noData[elem.nodeName.toLowerCase()]) ) {
+				nativeFn = elem[ type ];
+				nativeHandler = elem[ "on" + type ];
+			}
 		// prevent IE from throwing an error for some elements with some event types, see #3533
 		} catch (e) {}
-		// Handle triggering native .onfoo handlers (and on links since we don't call .click() for links)
-		if ( (!nativeFn || (jQuery.nodeName(elem, 'a') && type === "click")) && nativeHandler && nativeHandler.apply( elem, data ) === false ) {
-			event.result = false;
-		}
+
+		var isClick = jQuery.nodeName(elem, "a") && type === "click";
 
 		// Trigger the native events (except for clicks on links)
-		if ( !bubbling && nativeFn && !event.isDefaultPrevented() && !(jQuery.nodeName(elem, 'a') && type === "click") ) {
+		if ( !bubbling && nativeFn && !event.isDefaultPrevented() && !isClick ) {
 			this.triggered = true;
 			try {
-				nativeFn();
+				elem[ type ]();
 			// prevent IE from throwing an error for some hidden elements
 			} catch (e) {}
+
+		// Handle triggering native .onfoo handlers
+		} else if ( nativeHandler && elem[ "on" + type ].apply( elem, data ) === false ) {
+			event.result = false;
 		}
 
 		this.triggered = false;
@@ -325,6 +329,8 @@ jQuery.event = {
 
 			}
 		}
+
+		return event.result;
 	},
 
 	props: "altKey attrChange attrName bubbles button cancelable charCode clientX clientY ctrlKey currentTarget data detail eventPhase fromElement handler keyCode layerX layerY metaKey newValue offsetX offsetY originalTarget pageX pageY prevValue relatedNode relatedTarget screenX screenY shiftKey srcElement target toElement view wheelDelta which".split(" "),
@@ -401,7 +407,7 @@ jQuery.event = {
 	special: {
 		ready: {
 			// Make sure the ready event is setup
-			setup: bindReady,
+			setup: jQuery.bindReady,
 			teardown: function() {}
 		},
 
@@ -430,6 +436,21 @@ jQuery.event = {
 				}
 			},
 			special: {}
+		},
+		beforeunload: {
+			setup: function( data, namespaces, fn ) {
+				// We only want to do this special case on windows
+				if ( this.setInterval ) {
+					this.onbeforeunload = fn;
+				}
+
+				return false;
+			},
+			teardown: function( namespaces, fn ) {
+				if ( this.onbeforeunload === fn ) {
+					this.onbeforeunload = null;
+				}
+			}
 		}
 	}
 };
@@ -536,23 +557,25 @@ delegate = function( event ) {
 
 // Create mouseenter and mouseleave events
 jQuery.each({
-	mouseover: "mouseenter",
-	mouseout: "mouseleave"
+	mouseenter: "mouseover",
+	mouseleave: "mouseout"
 }, function( orig, fix ) {
-	jQuery.event.special[ fix ] = {
+	jQuery.event.special[ orig ] = {
 		setup: function(data){
-			jQuery.event.add( this, orig, data && data.selector ? delegate : withinElement, fix );
+			jQuery.event.add( this, fix, data && data.selector ? delegate : withinElement, orig );
 		},
 		teardown: function(data){
-			jQuery.event.remove( this, orig, data && data.selector ? delegate : withinElement );
+			jQuery.event.remove( this, fix, data && data.selector ? delegate : withinElement );
 		}
 	};
 });
 
 // submit delegation
+if ( !jQuery.support.submitBubbles ) {
+
 jQuery.event.special.submit = {
 	setup: function( data, namespaces, fn ) {
-		if ( !jQuery.support.submitBubbles && this.nodeName.toLowerCase() !== "form" ) {
+		if ( this.nodeName.toLowerCase() !== "form" ) {
 			jQuery.event.add(this, "click.specialSubmit." + fn.guid, function( e ) {
 				var elem = e.target, type = elem.type;
 
@@ -569,8 +592,6 @@ jQuery.event.special.submit = {
 				}
 			});
 		}
-
-		return false;
 	},
 
 	remove: function( namespaces, fn ) {
@@ -579,7 +600,11 @@ jQuery.event.special.submit = {
 	}
 };
 
+}
+
 // change delegation, happens here so we have bind.
+if ( !jQuery.support.changeBubbles ) {
+
 jQuery.event.special.change = {
 	filters: {
 		click: function( e ) { 
@@ -628,26 +653,23 @@ jQuery.event.special.change = {
 		}
 	},
 	setup: function( data, namespaces, fn ) {
-		// return false if we bubble
-		if ( !jQuery.support.changeBubbles ) {
-			for ( var type in changeFilters ) {
-				jQuery.event.add( this, type + ".specialChange." + fn.guid, changeFilters[type] );
-			}
+		for ( var type in changeFilters ) {
+			jQuery.event.add( this, type + ".specialChange." + fn.guid, changeFilters[type] );
 		}
 		
 		// always want to listen for change for trigger
 		return false;
 	},
 	remove: function( namespaces, fn ) {
-		if ( !jQuery.support.changeBubbles ) {
-			for ( var type in changeFilters ) {
-				jQuery.event.remove( this, type + ".specialChange" + (fn ? "."+fn.guid : ""), changeFilters[type] );
-			}
+		for ( var type in changeFilters ) {
+			jQuery.event.remove( this, type + ".specialChange" + (fn ? "."+fn.guid : ""), changeFilters[type] );
 		}
 	}
 };
 
 var changeFilters = jQuery.event.special.change.filters;
+
+}
 
 function trigger( type, elem, args ) {
 	args[0].type = type;
@@ -655,82 +677,53 @@ function trigger( type, elem, args ) {
 }
 
 // Create "bubbling" focus and blur events
-jQuery.each({
-	focus: "focusin",
-	blur: "focusout"
-}, function( orig, fix ){
-	var event = jQuery.event,
-		handle = event.handle;
-	
+if ( !jQuery.support.focusBubbles ) {
+
+jQuery.each({ focus: "focusin", blur: "focusout" }, function( orig, fix ){
+	jQuery.event.special[ orig ] = {
+		setup: function() {
+			jQuery.event.add( this, fix, ieHandler );
+		}, 
+		teardown: function() { 
+			jQuery.event.remove( this, fix, ieHandler );
+		}
+	};
+
 	function ieHandler() { 
 		arguments[0].type = orig;
-		return handle.apply(this, arguments);
+		return jQuery.event.handle.apply(this, arguments);
 	}
+});
 
-	event.special[orig] = {
-		setup:function() {
-			if ( this.addEventListener ) {
-				this.addEventListener( orig, handle, true );
-			} else {
-				event.add( this, fix, ieHandler );
+}
+
+jQuery.each(["bind", "one"], function(i, name) {
+	jQuery.fn[ name ] = function( type, data, fn, thisObject ) {
+		// Handle object literals
+		if ( typeof type === "object" ) {
+			for ( var key in type ) {
+				this[ name ](key, data, type[key], fn);
 			}
-		}, 
-		teardown:function() { 
-			if ( this.removeEventListener ) {
-				this.removeEventListener( orig, handle, true );
-			} else {
-				event.remove( this, fix, ieHandler );
-			}
+			return this;
 		}
+		
+		if ( jQuery.isFunction( data ) ) {
+			thisObject = fn;
+			fn = data;
+			data = undefined;
+		}
+		fn = thisObject === undefined ? fn : jQuery.event.proxy( fn, thisObject );
+		var handler = name == "one" ? jQuery.event.proxy( fn, function( event ) {
+			jQuery( this ).unbind( event, handler );
+			return fn.apply( this, arguments );
+		}) : fn;
+		return type === "unload" ? this.one(type, data, handler, thisObject) : this.each(function() {
+			jQuery.event.add( this, type, handler, data );
+		});
 	};
 });
 
 jQuery.fn.extend({
-	// TODO: make bind(), unbind() and one() DRY!
-	bind: function( type, data, fn, thisObject ) {
-		// Handle object literals
-		if ( typeof type === "object" ) {
-			for ( var key in type ) {
-				this.bind(key, data, type[key], fn);
-			}
-			return this;
-		}
-		
-		if ( jQuery.isFunction( data ) ) {
-			thisObject = fn;
-			fn = data;
-			data = undefined;
-		}
-		fn = thisObject === undefined ? fn : jQuery.event.proxy( fn, thisObject );
-		return type === "unload" ? this.one(type, data, fn, thisObject) : this.each(function() {
-			jQuery.event.add( this, type, fn, data );
-		});
-	},
-
-	one: function( type, data, fn, thisObject ) {
-		// Handle object literals
-		if ( typeof type === "object" ) {
-			for ( var key in type ) {
-				this.one(key, data, type[key], fn);
-			}
-			return this;
-		}
-		
-		if ( jQuery.isFunction( data ) ) {
-			thisObject = fn;
-			fn = data;
-			data = undefined;
-		}
-		fn = thisObject === undefined ? fn : jQuery.event.proxy( fn, thisObject );
-		var one = jQuery.event.proxy( fn, function( event ) {
-			jQuery( this ).unbind( event, one );
-			return fn.apply( this, arguments );
-		});
-		return this.each(function() {
-			jQuery.event.add( this, type, one, data );
-		});
-	},
-
 	unbind: function( type, fn ) {
 		// Handle object literals
 		if ( typeof type === "object" && !type.preventDefault ) {
@@ -739,12 +732,11 @@ jQuery.fn.extend({
 			}
 			return this;
 		}
-		
+
 		return this.each(function() {
 			jQuery.event.remove( this, type, fn );
 		});
 	},
-
 	trigger: function( type, data ) {
 		return this.each(function() {
 			jQuery.event.trigger( type, data, this );
@@ -785,24 +777,6 @@ jQuery.fn.extend({
 
 	hover: function( fnOver, fnOut ) {
 		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
-	},
-
-	ready: function( fn ) {
-		// Attach the listeners
-		bindReady();
-
-		// If the DOM is already ready
-		if ( jQuery.isReady ) {
-			// Execute the function immediately
-			fn.call( document, jQuery );
-
-		// Otherwise, remember the function for later
-		} else {
-			// Add the function to the wait list
-			jQuery.readyList.push( fn );
-		}
-
-		return this;
 	},
 
 	live: function( type, data, fn, thisObject ) {
@@ -880,106 +854,7 @@ function liveHandler( event ) {
 }
 
 function liveConvert( type, selector ) {
-	return ["live", type, selector//.replace(/[^\w\s\.]/g, function(ch){ return "\\"+ch})
-								  .replace(/\./g, "`")
-								  .replace(/ /g, "|")].join(".");
-}
-
-jQuery.extend({
-	isReady: false,
-	readyList: [],
-	// Handle when the DOM is ready
-	ready: function() {
-		// Make sure that the DOM is not already loaded
-		if ( !jQuery.isReady ) {
-			if ( !document.body ) {
-				return setTimeout( jQuery.ready, 13 );
-			}
-
-			// Remember that the DOM is ready
-			jQuery.isReady = true;
-
-			// If there are functions bound, to execute
-			if ( jQuery.readyList ) {
-				// Execute all of them
-				var fn, i = 0;
-				while ( (fn = jQuery.readyList[ i++ ]) ) {
-					fn.call( document, jQuery );
-				}
-
-				// Reset the list of functions
-				jQuery.readyList = null;
-			}
-
-			// Trigger any bound ready events
-			jQuery( document ).triggerHandler( "ready" );
-		}
-	}
-});
-
-var readyBound = false;
-
-function bindReady() {
-	if ( readyBound ) { return; }
-	readyBound = true;
-
-	// Catch cases where $(document).ready() is called after the
-	// browser event has already occurred.
-	if ( document.readyState === "complete" ) {
-		return jQuery.ready();
-	}
-
-	// Mozilla, Opera and webkit nightlies currently support this event
-	if ( document.addEventListener ) {
-		// Use the handy event callback
-		document.addEventListener( "DOMContentLoaded", function() {
-			document.removeEventListener( "DOMContentLoaded", arguments.callee, false );
-			jQuery.ready();
-		}, false );
-
-	// If IE event model is used
-	} else if ( document.attachEvent ) {
-		// ensure firing before onload,
-		// maybe late but safe also for iframes
-		document.attachEvent("onreadystatechange", function() {
-			// Make sure body exists, at least, in case IE gets a little overzealous (ticket #5443).
-			if ( document.readyState === "complete" ) {
-				document.detachEvent( "onreadystatechange", arguments.callee );
-				jQuery.ready();
-			}
-		});
-
-		// If IE and not a frame
-		// continually check to see if the document is ready
-		var toplevel = false;
-
-		try {
-			toplevel = window.frameElement == null;
-		} catch(e){}
-
-		if ( document.documentElement.doScroll && toplevel ) {
-			(function() {
-				if ( jQuery.isReady ) {
-					return;
-				}
-
-				try {
-					// If IE is used, use the trick by Diego Perini
-					// http://javascript.nwbox.com/IEContentLoaded/
-					document.documentElement.doScroll("left");
-				} catch( error ) {
-					setTimeout( arguments.callee, 0 );
-					return;
-				}
-
-				// and execute any waiting functions
-				jQuery.ready();
-			})();
-		}
-	}
-
-	// A fallback to window.onload, that will always work
-	jQuery.event.add( window, "load", jQuery.ready );
+	return ["live", type, selector.replace(/\./g, "`").replace(/ /g, "&")].join(".");
 }
 
 jQuery.each( ("blur focus load resize scroll unload click dblclick " +
@@ -990,6 +865,10 @@ jQuery.each( ("blur focus load resize scroll unload click dblclick " +
 	jQuery.fn[ name ] = function( fn ) {
 		return fn ? this.bind( name, fn ) : this.trigger( name );
 	};
+
+	if ( jQuery.fnAttr ) {
+		jQuery.fnAttr[ name ] = true;
+	}
 });
 
 // Prevent memory leaks in IE
@@ -1001,7 +880,10 @@ jQuery( window ).bind( 'unload', function() {
 	for ( var id in jQuery.cache ) {
 		// Skip the window
 		if ( id != 1 && jQuery.cache[ id ].handle ) {
-			jQuery.event.remove( jQuery.cache[ id ].handle.elem );
+			// Try/Catch is to handle iframes being unloaded, see #4280
+			try {
+				jQuery.event.remove( jQuery.cache[ id ].handle.elem );
+			} catch(e) {}
 		}
 	}
 });

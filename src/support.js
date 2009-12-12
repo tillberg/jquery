@@ -40,7 +40,8 @@
 
 		// Make sure that element opacity exists
 		// (IE uses filter instead)
-		opacity: a.style.opacity === "0.55",
+		// Use a regex to work around a WebKit issue. See #5145
+		opacity: /^0.55$/.test( a.style.opacity ),
 
 		// Verify style float existence
 		// (IE uses styleFloat instead of cssFloat)
@@ -81,6 +82,7 @@
 
 	// Figure out if the W3C box model works as expected
 	// document.body must exist before we can do this
+	// TODO: This timeout is temporary until I move ready into core.js.
 	jQuery(function(){
 		var div = document.createElement("div");
 		div.style.width = div.style.paddingLeft = "1px";
@@ -109,6 +111,7 @@
 	
 	jQuery.support.submitBubbles = eventSupported("submit");
 	jQuery.support.changeBubbles = eventSupported("change");
+	jQuery.support.focusBubbles = eventSupported("focus");
 
 	// release memory in IE
 	root = script = div = all = a = null;

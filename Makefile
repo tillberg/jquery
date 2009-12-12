@@ -7,9 +7,10 @@ DIST_DIR = ${PREFIX}/dist
 BASE_FILES = ${SRC_DIR}/core.js\
 	${SRC_DIR}/corex.js\
 	${SRC_DIR}/proto.js\
-	${SRC_DIR}/data.js\
-	${SRC_DIR}/event.js\
 	${SRC_DIR}/support.js\
+	${SRC_DIR}/data.js\
+	${SRC_DIR}/queue.js\
+	${SRC_DIR}/event.js\
 	${SRC_DIR}/selector.js\
 	${SRC_DIR}/traversing.js\
 	${SRC_DIR}/attributes.js\

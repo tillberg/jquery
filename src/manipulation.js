@@ -17,6 +17,7 @@ var rinlinejQuery = / jQuery\d+="(?:\d+|null)"/g,
 		tr: [ 2, "<table><tbody>", "</tbody></table>" ],
 		td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
 		col: [ 2, "<table><tbody></tbody><colgroup>", "</colgroup></table>" ],
+		area: [ 1, "<map>", "</map>" ],
 		_default: [ 0, "", "" ]
 	};
 
@@ -31,24 +32,17 @@ if ( !jQuery.support.htmlSerialize ) {
 
 jQuery.fn.extend({
 	text: function( text ) {
+		if(jQuery.isFunction(text)) {
+			return this.each(function() {
+				return jQuery(this).text( text.call(this) );
+			});
+		}
+
 		if ( typeof text !== "object" && text !== undefined ) {
 			return this.empty().append( (this[0] && this[0].ownerDocument || document).createTextNode( text ) );
 		}
 
-		var ret = "";
-
-		jQuery.each( this, function() {
-			// Get the text from text nodes and CDATA nodes
-			if ( this.nodeType === 3 || this.nodeType === 4 ) {
-				ret += this.nodeValue;
-
-			// Traverse everything else, except comment nodes
-			} else if ( this.nodeType !== 8 ) {
-				ret += jQuery.fn.text.call( this.childNodes );
-			}
-		});
-
-		return ret;
+		return jQuery.getText( this );
 	},
 
 	wrapAll: function( html ) {
@@ -60,7 +54,7 @@ jQuery.fn.extend({
 
 		if ( this[0] ) {
 			// The elements to wrap the target around
-			var wrap = jQuery( html, this[0].ownerDocument ).eq(0).clone();
+			var wrap = jQuery( html, this[0].ownerDocument ).eq(0).clone(true);
 
 			if ( this[0].parentNode ) {
 				wrap.insertBefore( this[0] );
@@ -99,7 +93,7 @@ jQuery.fn.extend({
 			}
 		}).end();
 	},
-	
+
 	append: function() {
 		return this.domManip(arguments, true, function(elem){
 			if ( this.nodeType === 1 ) {
@@ -210,7 +204,17 @@ jQuery.fn.extend({
 
 	replaceWith: function( value ) {
 		if ( this[0] && this[0].parentNode ) {
-			return this.after( value ).remove();
+			return this.each(function(){
+				var next = this.nextSibling, parent = this.parentNode;
+
+				jQuery(this).remove();
+
+				if ( next ) {
+					jQuery(next).before( value );
+				} else {
+					jQuery(parent).append( value );
+				}
+			});
 		} else {
 			return this.pushStack( jQuery(jQuery.isFunction(value) ? value() : value), "replaceWith", value );
 		}
@@ -279,13 +283,7 @@ function cloneCopyEvent(orig, ret) {
 			return;
 		}
 
-		var events = jQuery.data( orig[i], "events" );
-
-		for ( var type in events ) {
-			for ( var handler in events[ type ] ) {
-				jQuery.event.add( this, type, events[ type ][ handler ], events[ type ][ handler ].data );
-			}
-		}
+		jQuery.data( this, jQuery.data( orig[i++] ) );
 	});
 }
 
@@ -378,7 +376,7 @@ jQuery.extend({
 			context = context.ownerDocument || context[0] && context[0].ownerDocument || document;
 		}
 
-		var ret = [], div = context.createElement("div");
+		var ret = [];
 
 		jQuery.each(elems, function(i, elem){
 			if ( typeof elem === "number" ) {
@@ -398,7 +396,8 @@ jQuery.extend({
 				// Trim whitespace, otherwise indexOf won't work as expected
 				var tag = (rtagName.exec( elem ) || ["", ""])[1].toLowerCase(),
 					wrap = wrapMap[ tag ] || wrapMap._default,
-					depth = wrap[0];
+					depth = wrap[0],
+					div = context.createElement("div");
 
 				// Go to html and back, then peel off extra wrappers
 				div.innerHTML = wrap[1] + elem + wrap[2];
@@ -464,7 +463,7 @@ jQuery.extend({
 
 function cleanData( elems ) {
 	for ( var i = 0, elem, id; (elem = elems[i]) != null; i++ ) {
-		if ( (id = elem[expando]) ) {
+		if ( !jQuery.noData[elem.nodeName.toLowerCase()] && (id = elem[expando]) ) {
 			delete jQuery.cache[ id ];
 		}
 	}

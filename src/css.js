@@ -5,8 +5,8 @@ var rexclude = /z-?index|font-?weight|opacity|zoom|line-?height/i,
 	rfloat = /float/i,
 	rdashAlpha = /-([a-z])/ig,
 	rupper = /([A-Z])/g,
-	rnumpx = /^\d+(?:px)?$/i,
-	rnum = /^\d/,
+	rnumpx = /^-?\d+(?:px)?$/i,
+	rnum = /^-?\d/,
 
 	// cache check for defaultView.getComputedStyle
 	getComputedStyle = document.defaultView && document.defaultView.getComputedStyle,
@@ -18,8 +18,8 @@ var rexclude = /z-?index|font-?weight|opacity|zoom|line-?height/i,
 
 jQuery.fn.css = function( name, value ) {
 	return access( this, name, value, true, function( elem, name, value ) {
-		if (value === undefined) {
-			return jQuery.css( elem, name );
+		if ( value === undefined ) {
+			return jQuery.curCSS( elem, name );
 		}
 		
 		if ( typeof value === "number" && !rexclude.test(name) ) {
@@ -53,7 +53,7 @@ jQuery.extend({
 
 				// Set the alpha filter to set the opacity
 				var opacity = parseInt( value, 10 ) + '' === "NaN" ? "" : "alpha(opacity=" + value * 100 + ")";
-				filter = style.filter || jQuery.curCSS( elem, 'filter' ) || ""
+				var filter = style.filter || jQuery.curCSS( elem, 'filter' ) || "";
 				style.filter = ralpha.test(filter) ? filter.replace(ralpha, opacity) : opacity;
 			}
 
@@ -141,7 +141,13 @@ jQuery.extend({
 
 			name = name.replace( rupper, "-$1" ).toLowerCase();
 
-			var computedStyle = elem.ownerDocument.defaultView.getComputedStyle( elem, null );
+			var defaultView = elem.ownerDocument.defaultView;
+
+			if ( !defaultView ) {
+				return null;
+			}
+
+			var computedStyle = defaultView.getComputedStyle( elem, null );
 
 			if ( computedStyle ) {
 				ret = computedStyle.getPropertyValue( name );
@@ -200,18 +206,18 @@ jQuery.extend({
 });
 
 if ( jQuery.expr && jQuery.expr.filters ) {
-	jQuery.expr.filters.hidden = function(elem){
+	jQuery.expr.filters.hidden = function( elem ) {
 		var width = elem.offsetWidth, height = elem.offsetHeight,
-			 force = /^tr$/i.test( elem.nodeName ); // ticket #4512
+			skip = elem.nodeName.toLowerCase() === "tr";
 
-		return width === 0 && height === 0 && !force ?
+		return width === 0 && height === 0 && !skip ?
 			true :
-				width !== 0 && height !== 0 && !force ?
-					false :
-						jQuery.curCSS(elem, "display") === "none";
+			width > 0 && height > 0 && !skip ?
+				false :
+				jQuery.curCSS(elem, "display") === "none";
 	};
 
-	jQuery.expr.filters.visible = function(elem){
-		return !jQuery.expr.filters.hidden(elem);
+	jQuery.expr.filters.visible = function( elem ) {
+		return !jQuery.expr.filters.hidden( elem );
 	};
 }

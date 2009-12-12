@@ -195,10 +195,8 @@ jQuery.extend({
 	lastModified: {},
 	etag: {},
 
-	ajax: function( s ) {
-		// Extend the settings, but re-extend 's' so that it can be
-		// checked again later (in the test suite, specifically)
-		s = jQuery.extend(true, {}, jQuery.ajaxSettings, s);
+	ajax: function( origSettings ) {
+		var s = jQuery.extend(true, {}, jQuery.ajaxSettings, origSettings);
 		
 		var jsonp, status, data,
 			callbackContext = s.context || window,
@@ -223,7 +221,7 @@ jQuery.extend({
 
 		// Build temporary JSONP function
 		if ( s.dataType === "json" && (s.data && jsre.test(s.data) || jsre.test(s.url)) ) {
-			jsonp = "jsonp" + jsc++;
+			jsonp = s.jsonpCallback || ("jsonp" + jsc++);
 
 			// Replace the =? sequence both in the query string and the data
 			if ( s.data ) {
@@ -237,7 +235,7 @@ jQuery.extend({
 			s.dataType = "script";
 
 			// Handle JSONP-style loading
-			window[ jsonp ] = function(tmp){
+			window[ jsonp ] = window[ jsonp ] || function(tmp){
 				data = tmp;
 				success();
 				complete();
@@ -333,7 +331,7 @@ jQuery.extend({
 		// Need an extra try/catch for cross domain requests in Firefox 3
 		try {
 			// Set the correct header, if data is being sent
-			if ( s.data ) {
+			if ( s.data || origSettings && origSettings.contentType ) {
 				xhr.setRequestHeader("Content-Type", s.contentType);
 			}
 
@@ -432,7 +430,7 @@ jQuery.extend({
 				// Fire the complete handlers
 				complete();
 
-				if ( isTimeout ) {
+				if ( isTimeout === "timeout" ) {
 					xhr.abort();
 				}
 

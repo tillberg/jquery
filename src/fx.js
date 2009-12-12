@@ -128,6 +128,11 @@ jQuery.fn.extend({
 					// Make sure that nothing sneaks out
 					opt.overflow = this.style.overflow;
 				}
+				if ( jQuery.isArray( prop[p] ) ) {
+					// Create (if needed) and add to specialEasing
+					(opt.specialEasing = opt.specialEasing || {})[p] = prop[p][1];
+					prop[p] = prop[p][0];
+				}
 			}
 
 			if ( opt.overflow != null ) {
@@ -219,7 +224,7 @@ jQuery.each({
 jQuery.extend({
 
 	speed: function(speed, easing, fn) {
-		var opt = typeof speed === "object" ? speed : {
+		var opt = speed && typeof speed === "object" ? speed : {
 			complete: fn || !fn && easing ||
 				jQuery.isFunction( speed ) && speed,
 			duration: speed,
@@ -359,7 +364,9 @@ jQuery.fx.prototype = {
 					this.elem.style.overflow = this.options.overflow;
 
 					// Reset the display
-					this.elem.style.display = this.options.display;
+					var old = jQuery.data(this.elem, "olddisplay");
+					this.elem.style.display = old ? old : this.options.display;
+
 					if ( jQuery.css(this.elem, "display") == "none" ) {
 						this.elem.style.display = "block";
 					}
@@ -385,7 +392,9 @@ jQuery.fx.prototype = {
 			this.state = n / this.options.duration;
 
 			// Perform the easing function, defaults to swing
-			this.pos = jQuery.easing[this.options.easing || (jQuery.easing.swing ? "swing" : "linear")](this.state, n, 0, 1, this.options.duration);
+			var specialEasing = this.options.specialEasing && this.options.specialEasing[this.prop];
+			var defaultEasing = this.options.easing || (jQuery.easing.swing ? "swing" : "linear");
+			this.pos = jQuery.easing[specialEasing || defaultEasing](this.state, n, 0, 1, this.options.duration);
 			this.now = this.start + ((this.end - this.start) * this.pos);
 
 			// Perform the next step of the animation
@@ -432,7 +441,7 @@ jQuery.extend( jQuery.fx, {
 
 		_default: function(fx){
 			if ( fx.elem.style && fx.elem.style[ fx.prop ] != null ) {
-				fx.elem.style[ fx.prop ] = fx.now + fx.unit;
+				fx.elem.style[ fx.prop ] = (fx.prop === "width" || fx.prop === "height" ? Math.max(0, fx.now) : fx.now) + fx.unit;
 			} else {
 				fx.elem[ fx.prop ] = fx.now;
 			}
