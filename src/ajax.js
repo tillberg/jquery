@@ -91,7 +91,7 @@ jQuery.fn.extend({
 				(this.checked || rselectTextarea.test(this.nodeName) ||
 					rinput.test(this.type));
 		})
-		.map(function(elem, i){
+		.map(function(i, elem){
 			var val = jQuery(this).val();
 
 			return val == null ?

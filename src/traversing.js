@@ -118,7 +118,7 @@ jQuery.fn.extend({
 		var pos = jQuery.expr.match.POS.test( selectors ) ? 
 			jQuery( selectors, context || this.context ) : null;
 
-		return this.map(function(cur, i){
+		return this.map(function(i, cur){
 			while ( cur && cur.ownerDocument && cur !== context ) {
 				if ( pos ? pos.index(cur) > -1 : jQuery(cur).is(selectors) ) {
 					return cur;

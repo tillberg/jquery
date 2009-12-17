@@ -269,7 +269,7 @@ jQuery.fn = jQuery.prototype = {
 	map: function( callback ) {
 		if (this.o) { return jQuery( jQuery.map( this.o, callback, undefined, 1 ) ); }
 		return this.pushStack( jQuery.map(this, function(elem, i){
-			return callback.call( elem, elem, i );
+			return callback.call( elem, i, elem );
 		})); 
 	},
 	
