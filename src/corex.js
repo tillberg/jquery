@@ -125,7 +125,7 @@ jQuery.extend({
 
 	mapToObj: function( o, cb ) {
 		return jQuery.reduce( o, {}, function( r, v, k ) {
-			var x = cb( v, k );
+			var x = cb.call( v, k, v );
 			if ( jQuery.isArray( x ) ) {
 				// Return value was of form [ k, v ]
 				r[ x[ 0 ] ] = x[ 1 ];
@@ -192,7 +192,7 @@ jQuery.extend({
 		// If this is just an array and JS 1.8 reduce is available, use it (untested)
 		//if (!isObj && o.reduce) return o.reduce( cb, res );
 		jQuery.each( o, function( k, v ) {
-			res = cb( res, v, k );
+			res = cb.call( v, res, k, v );
 		});
 		return res;
 	},
