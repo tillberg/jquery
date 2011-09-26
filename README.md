@@ -2,7 +2,11 @@ Preface by Dan Tillberg:
 -----------------------
 This was an experiment to combine JQuery and underscore under one roof, in a way.
 
-I gave up mainly because $.map() and $.fn.map() pass key and value in different orders to the callback.  Dunno how this snuck into JQuery in the first place, but this alone (without breaking backward-compatibility, which even if just for personal use, would break a lot of plugins) would make this a poor candidate for use.  I just use underscore separate and have some weird times when I use $.fn.map and _.map in the same line.
+I gave up mainly because $.map() and $.fn.map() pass key and value in different orders 
+to the callback.  Dunno how this snuck into JQuery in the first place, but this alone 
+(without breaking backward-compatibility, which even if just for personal use, would 
+break a lot of plugins) would make this a poor candidate for use.  I just use underscore
+separately and have some weird times when I use $.fn.map and _.map in the same line.
 
 
 
